@@ -5,10 +5,9 @@
 #
 A Mattermost plugin for communicating daily standups across teams
 
+> Fork of [standup-raven/standup-raven](https://github.com/standup-raven/standup-raven), modernized for Mattermost v9+.
 
-[![CI](https://github.com/standup-raven/standup-raven/actions/workflows/ci.yml/badge.svg)](https://github.com/standup-raven/standup-raven/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/standup-raven/standup-raven/branch/master/graph/badge.svg)](https://codecov.io/gh/standup-raven/standup-raven)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2940/badge)](https://bestpractices.coreinfrastructure.org/projects/2940)
+[![CI](https://github.com/frndchagas/standup-raven/actions/workflows/ci.yml/badge.svg)](https://github.com/frndchagas/standup-raven/actions/workflows/ci.yml)
 
 </div>
 
@@ -99,10 +98,9 @@ The generated standup contains the names of members who have yet to fill their s
 
 ## Reporting Security Vulnerabilities
 
-Due to the sensitive nature of such vulnerabilities, please refrain from posting them publically
-over GitHub issues or any other medium.
+For issues specific to this fork, please open a [GitHub issue](https://github.com/frndchagas/standup-raven/issues).
 
-Be responsible and report them to hello@standupraven.com .
+For vulnerabilities in the original project, report them to hello@standupraven.com.
 
 ## 🌟 Attribution
 
