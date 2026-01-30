@@ -73,11 +73,11 @@ func executeCommandViewConfig(args []string, context Context) (*model.CommandRes
 	emptyTime := otime.OTime{}
 	windowOpenTimeText := "Not set"
 	if conf.WindowOpenTime != emptyTime {
-		windowOpenTimeText = conf.WindowOpenTime.Time.Format("15:04")
+		windowOpenTimeText = conf.WindowOpenTime.Format("15:04")
 	}
 	windowCloseTimeText := "Not set"
 	if conf.WindowCloseTime != emptyTime {
-		windowCloseTimeText = conf.WindowCloseTime.Time.Format("15:04")
+		windowCloseTimeText = conf.WindowCloseTime.Format("15:04")
 	}
 
 	text := fmt.Sprintf(

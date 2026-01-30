@@ -88,5 +88,5 @@ func (ct OTime) MarshalJSON() ([]byte, error) {
 	if ct.UnixNano() == nilTime {
 		return []byte("null"), nil
 	}
-	return []byte(fmt.Sprintf("\"%s\"", ct.Time.Format(layoutTime))), nil
+	return []byte(fmt.Sprintf("\"%s\"", ct.Format(layoutTime))), nil
 }

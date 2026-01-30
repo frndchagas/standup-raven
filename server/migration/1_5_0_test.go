@@ -4,11 +4,11 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/standup-raven/standup-raven/server/config"
 	"github.com/standup-raven/standup-raven/server/standup"
+	"github.com/standup-raven/standup-raven/server/testutil"
 )
 
 func TestUpgradeDatabaseToVersion1_5_0(t *testing.T) {

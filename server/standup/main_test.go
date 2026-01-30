@@ -11,13 +11,13 @@ import (
 	"github.com/mattermost/mattermost/server/public/plugin/plugintest"
 	"github.com/mattermost/mattermost/server/public/plugin/plugintest/mock"
 	"github.com/pkg/errors"
-	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/teambition/rrule-go"
 
 	"github.com/standup-raven/standup-raven/server/config"
 	"github.com/standup-raven/standup-raven/server/logger"
 	"github.com/standup-raven/standup-raven/server/otime"
+	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/standup-raven/standup-raven/server/util"
 )
 
