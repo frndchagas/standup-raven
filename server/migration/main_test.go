@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"bou.ke/monkey"
+	"github.com/standup-raven/standup-raven/server/testutil"
 
-	"github.com/mattermost/mattermost-server/v5/model"
-	"github.com/mattermost/mattermost-server/v5/plugin/plugintest"
+	"github.com/mattermost/mattermost/server/public/model"
+	"github.com/mattermost/mattermost/server/public/plugin/plugintest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
@@ -23,8 +23,8 @@ func baseMock() *plugintest.API {
 	mockAPI := &plugintest.API{}
 	config.Mattermost = mockAPI
 
-	monkey.Patch(logger.Debug, func(msg string, err error, keyValuePairs ...interface{}) {})
-	monkey.Patch(logger.Error, func(msg string, err error, extraData map[string]interface{}) {})
+	testutil.Patch(logger.Debug, func(msg string, err error, keyValuePairs ...interface{}) {})
+	testutil.Patch(logger.Error, func(msg string, err error, extraData map[string]interface{}) {})
 
 	location, _ := time.LoadLocation("Asia/Kolkata")
 	mockConfig := &config.Configuration{
@@ -40,13 +40,13 @@ func baseMock() *plugintest.API {
 }
 
 func TearDown() {
-	monkey.UnpatchAll()
+	testutil.UnpatchAll()
 }
 
 func TestDatebaseMigration_getCurrentSchemaVersion_Error(t *testing.T) {
 	defer TearDown()
 	baseMock()
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "", errors.New("")
 	})
 
@@ -83,7 +83,7 @@ func TestDatabaseMigration_JsonMarshal_Error(t *testing.T) {
 	defer TearDown()
 	mockAPI := baseMock()
 	mockAPI.On("KVGet", "mS93mHcYcKvlwjnt1DvUXsRwcIuoOO+mKsCRNZl/Ht4=", mock.Anything).Return(nil, nil)
-	monkey.Patch(json.Marshal, func(v interface{}) ([]byte, error) {
+	testutil.Patch(json.Marshal, func(v interface{}) ([]byte, error) {
 		return nil, errors.New("")
 	})
 	err := DatabaseMigration()
@@ -95,7 +95,7 @@ func TestDatabaseMigration_JsonUnmarshal_Error(t *testing.T) {
 	mockAPI := baseMock()
 	mockAPI.On("KVGet", "mS93mHcYcKvlwjnt1DvUXsRwcIuoOO+mKsCRNZl/Ht4=", mock.Anything).Return([]byte("1.4.0"), nil)
 	mockAPI.On("KVSet", mock.Anything, mock.Anything).Return(nil)
-	monkey.Patch(json.Unmarshal, func(data []byte, v interface{}) error {
+	testutil.Patch(json.Unmarshal, func(data []byte, v interface{}) error {
 		return errors.New("")
 	})
 	err := DatabaseMigration()
@@ -108,10 +108,10 @@ func TestDatabaseMigration_GetStandupChannels_Error(t *testing.T) {
 	mockAPI.On("KVGet", "mS93mHcYcKvlwjnt1DvUXsRwcIuoOO+mKsCRNZl/Ht4=", mock.Anything).Return([]byte("1.4.0"), nil)
 	mockAPI.On("KVSet", mock.Anything, mock.Anything).Return(nil)
 
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "1.4.0", nil
 	})
-	monkey.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
 		return nil, errors.New("")
 	})
 	err := DatabaseMigration()
@@ -124,15 +124,15 @@ func TestDatabaseMigration_GetStandupConfig_Error(t *testing.T) {
 	mockAPI.On("KVGet", "mS93mHcYcKvlwjnt1DvUXsRwcIuoOO+mKsCRNZl/Ht4=", mock.Anything).Return([]byte("1.4.0"), nil)
 	mockAPI.On("KVSet", mock.Anything, mock.Anything).Return(nil)
 
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "1.4.0", nil
 	})
-	monkey.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
-	monkey.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
+	testutil.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
 		return nil, errors.New("")
 	})
 	err := DatabaseMigration()
@@ -148,15 +148,15 @@ func TestDatabaseMigration_GetStandupConfig_Nil(t *testing.T) {
 	conf.PluginVersion = version1_5_0
 	config.SetConfig(conf)
 
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "1.4.0", nil
 	})
-	monkey.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
-	monkey.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
+	testutil.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
 		return nil, nil
 	})
 	err := DatabaseMigration()
@@ -167,15 +167,15 @@ func TestDatabaseMigration_SaveStandupConfig_Error(t *testing.T) {
 	defer TearDown()
 	baseMock()
 
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "1.4.0", nil
 	})
-	monkey.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
-	monkey.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
+	testutil.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
 		windowOpenTime := otime.OTime{
 			Time: otime.Now("Asia/Kolkata").Add(-1 * time.Hour),
 		}
@@ -196,7 +196,7 @@ func TestDatabaseMigration_SaveStandupConfig_Error(t *testing.T) {
 		}, nil
 	})
 
-	monkey.Patch(standup.SaveStandupConfig, func(standupConfig *standup.Config) (*standup.Config, error) {
+	testutil.Patch(standup.SaveStandupConfig, func(standupConfig *standup.Config) (*standup.Config, error) {
 		return nil, errors.New("")
 	})
 
@@ -213,15 +213,15 @@ func TestDatabaseMigration_(t *testing.T) {
 	conf.PluginVersion = version1_5_0
 	config.SetConfig(conf)
 
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "1.4.0", nil
 	})
-	monkey.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
-	monkey.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
+	testutil.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
 		return nil, nil
 	})
 	err := DatabaseMigration()
@@ -232,18 +232,18 @@ func TestDatabaseMigration_updateSchemaVersion_Error(t *testing.T) {
 	defer TearDown()
 	baseMock()
 
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "1.4.0", nil
 	})
-	monkey.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
-	monkey.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
+	testutil.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
 		return nil, nil
 	})
-	monkey.Patch(json.Marshal, func(v interface{}) ([]byte, error) {
+	testutil.Patch(json.Marshal, func(v interface{}) ([]byte, error) {
 		return nil, errors.New("")
 	})
 	err := DatabaseMigration()
@@ -255,15 +255,15 @@ func TestDatabaseMigration_updateSchemaVersion_KVSet_Error(t *testing.T) {
 	mockAPI := baseMock()
 	mockAPI.On("KVSet", mock.Anything, mock.Anything).Return(model.NewAppError("", "", nil, "", 0))
 
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "1.4.0", nil
 	})
-	monkey.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(standup.GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
-	monkey.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
+	testutil.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
 		return nil, nil
 	})
 	err := DatabaseMigration()
@@ -274,7 +274,7 @@ func TestDatabaseMigration_getSChemaVersion_Error(t *testing.T) {
 	defer TearDown()
 	baseMock()
 
-	monkey.Patch(getCurrentSchemaVersion, func() (string, error) {
+	testutil.Patch(getCurrentSchemaVersion, func() (string, error) {
 		return "", errors.New("")
 	})
 

@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"bou.ke/monkey"
-	"github.com/mattermost/mattermost-server/v5/model"
-	"github.com/mattermost/mattermost-server/v5/plugin/plugintest"
-	"github.com/mattermost/mattermost-server/v5/plugin/plugintest/mock"
+	"github.com/mattermost/mattermost/server/public/model"
+	"github.com/mattermost/mattermost/server/public/plugin/plugintest"
+	"github.com/mattermost/mattermost/server/public/plugin/plugintest/mock"
 	"github.com/pkg/errors"
+	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/teambition/rrule-go"
 
@@ -25,10 +25,10 @@ func baseMock() *plugintest.API {
 	mockAPI := &plugintest.API{}
 	config.Mattermost = mockAPI
 
-	monkey.Patch(logger.Debug, func(msg string, err error, keyValuePairs ...interface{}) {})
-	monkey.Patch(logger.Error, func(msg string, err error, extraData map[string]interface{}) {})
-	monkey.Patch(logger.Info, func(msg string, err error, keyValuePairs ...interface{}) {})
-	monkey.Patch(logger.Warn, func(msg string, err error, keyValuePairs ...interface{}) {})
+	testutil.Patch(logger.Debug, func(msg string, err error, keyValuePairs ...interface{}) {})
+	testutil.Patch(logger.Error, func(msg string, err error, extraData map[string]interface{}) {})
+	testutil.Patch(logger.Info, func(msg string, err error, keyValuePairs ...interface{}) {})
+	testutil.Patch(logger.Warn, func(msg string, err error, keyValuePairs ...interface{}) {})
 
 	location, _ := time.LoadLocation("Asia/Kolkata")
 	mockConfig := &config.Configuration{
@@ -42,7 +42,7 @@ func baseMock() *plugintest.API {
 }
 
 func TearDown() {
-	monkey.UnpatchAll()
+	testutil.UnpatchAll()
 }
 
 func TestUserStandup_IsValid(t *testing.T) {
@@ -276,37 +276,37 @@ func TestAddStandupChannel(t *testing.T) {
 
 	mockAPI.On("LogDebug", mock.AnythingOfType("string"))
 
-	monkey.Patch(GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
-	defer monkey.Unpatch(GetStandupChannels)
+	defer testutil.Unpatch(GetStandupChannels)
 
-	monkey.Patch(setStandupChannels, func(channels map[string]string) error {
+	testutil.Patch(setStandupChannels, func(channels map[string]string) error {
 		return nil
 	})
-	defer monkey.Unpatch(setStandupChannels)
+	defer testutil.Unpatch(setStandupChannels)
 
 	assert.Nil(t, AddStandupChannel("channel_2"), "should not produce error")
 
-	monkey.Patch(setStandupChannels, func(channels map[string]string) error {
+	testutil.Patch(setStandupChannels, func(channels map[string]string) error {
 		return errors.New("")
 	})
 	assert.NotNil(t, AddStandupChannel("channel_2"), "should produce error as couldn't save standup channels")
 
-	monkey.Patch(GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(GetStandupChannels, func() (map[string]string, error) {
 		return nil, errors.New("")
 	})
 	assert.NotNil(t, AddStandupChannel("channel_2"), "should produce error as couldn't fetch existing standup channels")
 
-	monkey.Patch(GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
 
-	monkey.Patch(setStandupChannels, func(channels map[string]string) error {
+	testutil.Patch(setStandupChannels, func(channels map[string]string) error {
 		return nil
 	})
 	assert.Nil(t, AddStandupChannel("channel_1"), "shouldn't fail if adding a channel which was already a standup channel")
@@ -393,7 +393,7 @@ func TestSaveUserStandup(t *testing.T) {
 	mockAPI := baseMock()
 	mockAPI.On("KVSet", mock.AnythingOfType("string"), mock.Anything).Return(nil)
 
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		windowOpenTime := otime.OTime{
 			Time: otime.Now("Asia/Kolkata").Add(-55 * time.Minute),
 		}
@@ -892,7 +892,7 @@ func TestUpdateChannelHeader(t *testing.T) {
 		return
 	}
 
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return &Config{
 			ScheduleEnabled: true,
 			WindowOpenTime:  windowOpenTime,
@@ -923,7 +923,7 @@ func TestUpdateChannelHeader(t *testing.T) {
 	assert.Nil(t, err, "no error should have been produced")
 	mockAPI.AssertNumberOfCalls(t, "UpdateChannel", 2)
 
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return &Config{
 			ScheduleEnabled: false,
 			WindowOpenTime:  windowOpenTime,
@@ -955,7 +955,7 @@ func TestUpdateChannelHeader(t *testing.T) {
 	mockAPI.AssertNumberOfCalls(t, "UpdateChannel", 4)
 
 	// no existing channel standup config
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return nil, nil
 	})
 
@@ -992,7 +992,7 @@ func TestUpdateChannelHeader(t *testing.T) {
 	mockAPI.On("GetChannel", "channel_id_1").Return(&model.Channel{
 		Header: "**Standup Schedule**: Weekly on MO 10:00 to 15:00** ** | user-defined header",
 	}, nil)
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return &Config{
 			ScheduleEnabled: true,
 			WindowOpenTime:  windowOpenTime,
@@ -1019,7 +1019,7 @@ func TestUpdateChannelHeader(t *testing.T) {
 	mockAPI.On("GetChannel", "channel_id_1").Return(&model.Channel{
 		Header: "",
 	}, nil)
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return &Config{
 			ScheduleEnabled: true,
 			WindowOpenTime:  windowOpenTime,
@@ -1042,7 +1042,7 @@ func TestUpdateChannelHeader(t *testing.T) {
 
 func TestUpdateChannelHeader_GetStandupConfig_Error(t *testing.T) {
 	defer TearDown()
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return nil, errors.New("error")
 	})
 
@@ -1069,7 +1069,7 @@ func TestUpdateChannelHeader_GetChannel_Error(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return &Config{
 			ScheduleEnabled: true,
 			WindowOpenTime:  windowOpenTime,
@@ -1111,7 +1111,7 @@ func TestUpdateChannelHeader_UpdateChannel_Error(t *testing.T) {
 		return
 	}
 
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return &Config{
 			ScheduleEnabled: true,
 			WindowOpenTime:  windowOpenTime,
@@ -1158,7 +1158,7 @@ func TestUpdateChannelHeader_ExistingPipeInHeader(t *testing.T) {
 		return
 	}
 
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return &Config{
 			ScheduleEnabled: true,
 			WindowOpenTime:  windowOpenTime,
@@ -1189,7 +1189,7 @@ func TestUpdateChannelHeader_ExistingPipeInHeader(t *testing.T) {
 	assert.Nil(t, err, "no error should have been produced")
 	mockAPI.AssertNumberOfCalls(t, "UpdateChannel", 2)
 
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return &Config{
 			ScheduleEnabled: false,
 			WindowOpenTime:  windowOpenTime,
@@ -1227,7 +1227,7 @@ func TestUpdateChannelHeader_ArchivedChannel(t *testing.T) {
 		DeleteAt: time.Now().Unix(),
 	}, nil)
 
-	monkey.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
+	testutil.Patch(GetStandupConfig, func(channelID string) (*Config, error) {
 		return nil, nil
 	})
 
@@ -1246,17 +1246,17 @@ func TestRemoveStandupChannels(t *testing.T) {
 
 	mockAPI.On("LogDebug", mock.AnythingOfType("string"))
 
-	monkey.Patch(GetStandupChannels, func() (map[string]string, error) {
+	testutil.Patch(GetStandupChannels, func() (map[string]string, error) {
 		return map[string]string{
 			"channel_1": "channel_1",
 		}, nil
 	})
-	defer monkey.Unpatch(GetStandupChannels)
+	defer testutil.Unpatch(GetStandupChannels)
 
-	monkey.Patch(setStandupChannels, func(channels map[string]string) error {
+	testutil.Patch(setStandupChannels, func(channels map[string]string) error {
 		return nil
 	})
-	defer monkey.Unpatch(setStandupChannels)
+	defer testutil.Unpatch(setStandupChannels)
 
 	assert.Nil(t, RemoveStandupChannels([]string{"channel_1", "channel_2"}))
 }

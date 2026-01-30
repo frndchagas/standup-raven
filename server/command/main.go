@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mattermost/mattermost-server/v5/model"
+	"github.com/mattermost/mattermost/server/public/model"
 )
 
 type Context struct {
@@ -46,6 +46,7 @@ var commands = map[string]*Config{
 	commandConfig().AutocompleteData.Trigger:        commandConfig(),
 	commandAddMembers().AutocompleteData.Trigger:    commandAddMembers(),
 	commandRemoveMembers().AutocompleteData.Trigger: commandRemoveMembers(),
+	commandViewConfig().AutocompleteData.Trigger:    commandViewConfig(),
 	commandStandup().AutocompleteData.Trigger:       commandStandup(),
 	commandHelp().AutocompleteData.Trigger:          commandHelp(),
 }

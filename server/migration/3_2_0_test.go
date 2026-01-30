@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"bou.ke/monkey"
+	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +12,7 @@ func TestUpgradeDatabaseToVersion3_2_0(t *testing.T) {
 	defer TearDown()
 
 	updateSchemaVersionCount := 0
-	monkey.Patch(updateSchemaVersion, func(version string) error {
+	testutil.Patch(updateSchemaVersion, func(version string) error {
 		updateSchemaVersionCount++
 		return nil
 	})
@@ -25,7 +25,7 @@ func TestUpgradeDatabaseToVersion3_2_0(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 2, updateSchemaVersionCount)
 
-	monkey.Patch(updateSchemaVersion, func(version string) error {
+	testutil.Patch(updateSchemaVersion, func(version string) error {
 		updateSchemaVersionCount++
 		return errors.New("simulated error")
 	})
@@ -39,7 +39,7 @@ func TestUpgradeDatabaseToVersion3_2_1(t *testing.T) {
 	defer TearDown()
 
 	updateSchemaVersionCount := 0
-	monkey.Patch(updateSchemaVersion, func(version string) error {
+	testutil.Patch(updateSchemaVersion, func(version string) error {
 		updateSchemaVersionCount++
 		return nil
 	})
@@ -52,7 +52,7 @@ func TestUpgradeDatabaseToVersion3_2_1(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 2, updateSchemaVersionCount)
 
-	monkey.Patch(updateSchemaVersion, func(version string) error {
+	testutil.Patch(updateSchemaVersion, func(version string) error {
 		updateSchemaVersionCount++
 		return errors.New("simulated error")
 	})

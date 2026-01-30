@@ -3,13 +3,13 @@ package command
 import (
 	"testing"
 
-	"bou.ke/monkey"
-	"github.com/mattermost/mattermost-server/v5/model"
+	"github.com/mattermost/mattermost/server/public/model"
+	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
 func TearDown() {
-	monkey.UnpatchAll()
+	testutil.UnpatchAll()
 }
 
 func TestCommandMaster_Execution(t *testing.T) {
