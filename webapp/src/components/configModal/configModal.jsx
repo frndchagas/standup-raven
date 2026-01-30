@@ -20,8 +20,6 @@ import request from 'superagent';
 import utils from '../../utils';
 import * as RavenClient from '../../raven-client';
 import Constants from '../../constants';
-import SentryBoundary from '../../SentryBoundary';
-
 import ToggleSwitch from '../toggleSwitch';
 import RRule from '../rRule';
 import TimePicker from '../timePicker';
@@ -32,7 +30,7 @@ import reactStyles from './style';
 const configModalCloseTimeout = 1000;
 const timezones = require('../../../../timezones.json');
 
-class ConfigModal extends (SentryBoundary, React.Component) {
+class ConfigModal extends React.Component {
     newConfigPermissionMissingComponent = (
         <span>
             <span>{'No standup configured for this channel'}</span>
@@ -54,6 +52,13 @@ class ConfigModal extends (SentryBoundary, React.Component) {
         return {
             user_aggregated: 'User Aggregated',
             type_aggregated: 'Type Aggregated',
+        };
+    }
+
+    static get POSTING_MODE_DISPLAY_NAMES() {
+        return {
+            scheduled: 'Scheduled Report',
+            immediate: 'Immediate',
         };
     }
 
@@ -80,6 +85,7 @@ class ConfigModal extends (SentryBoundary, React.Component) {
             standupConfigured: null,
             windowOpenTime: '00:00',
             windowCloseTime: '00:00',
+            postingMode: 'scheduled',
             reportFormat: 'user_aggregated',
             sections: {},
             members: [],
@@ -117,6 +123,12 @@ class ConfigModal extends (SentryBoundary, React.Component) {
     handleWindowCloseTimeChange = (time) => {
         this.setState({
             windowCloseTime: time,
+        });
+    };
+
+    handlePostingModeChange = (mode) => {
+        this.setState({
+            postingMode: mode,
         });
     };
 
@@ -226,6 +238,7 @@ class ConfigModal extends (SentryBoundary, React.Component) {
                         this.setState((prevState) => {
                             prevState.windowOpenTime = standupConfig.windowOpenTime;
                             prevState.windowCloseTime = standupConfig.windowCloseTime;
+                            prevState.postingMode = standupConfig.postingMode || 'scheduled';
                             prevState.reportFormat = standupConfig.reportFormat;
                             prevState.members = standupConfig.members;
                             prevState.sections = {};
@@ -297,6 +310,7 @@ class ConfigModal extends (SentryBoundary, React.Component) {
             channelId: this.props.channelID,
             windowOpenTime: this.state.windowOpenTime,
             windowCloseTime: this.state.windowCloseTime,
+            postingMode: this.state.postingMode,
             reportFormat: this.state.reportFormat,
             sections: Object.values(this.state.sections).map((x) => x.trim()).filter((x) => x !== ''),
             members: this.state.members,
@@ -443,18 +457,37 @@ class ConfigModal extends (SentryBoundary, React.Component) {
                                     disabled={!this.state.hasPermission}
                                 >
                                     <ControlLabel style={style.controlLabel}>
-                                        {'Standup Report Format:'}
+                                        {'Posting Mode:'}
                                     </ControlLabel>
                                     <SplitButton
                                         disabled={!this.state.hasPermission}
-                                        title={ConfigModal.REPORT_DISPLAY_NAMES[this.state.reportFormat]}
-                                        onSelect={this.handleReportTypeChange}
+                                        title={ConfigModal.POSTING_MODE_DISPLAY_NAMES[this.state.postingMode]}
+                                        onSelect={this.handlePostingModeChange}
                                         bsStyle={'link'}
                                     >
-                                        <MenuItem eventKey={'user_aggregated'}>{'User Aggregated'}</MenuItem>
-                                        <MenuItem eventKey={'type_aggregated'}>{'Type Aggregated'}</MenuItem>
+                                        <MenuItem eventKey={'scheduled'}>{'Scheduled Report'}</MenuItem>
+                                        <MenuItem eventKey={'immediate'}>{'Immediate'}</MenuItem>
                                     </SplitButton>
                                 </FormGroup>
+                                {this.state.postingMode !== 'immediate' && (
+                                    <FormGroup
+                                        style={style.formGroup}
+                                        disabled={!this.state.hasPermission}
+                                    >
+                                        <ControlLabel style={style.controlLabel}>
+                                            {'Standup Report Format:'}
+                                        </ControlLabel>
+                                        <SplitButton
+                                            disabled={!this.state.hasPermission}
+                                            title={ConfigModal.REPORT_DISPLAY_NAMES[this.state.reportFormat]}
+                                            onSelect={this.handleReportTypeChange}
+                                            bsStyle={'link'}
+                                        >
+                                            <MenuItem eventKey={'user_aggregated'}>{'User Aggregated'}</MenuItem>
+                                            <MenuItem eventKey={'type_aggregated'}>{'Type Aggregated'}</MenuItem>
+                                        </SplitButton>
+                                    </FormGroup>
+                                )}
                                 <FormGroup
                                     style={{...style.formGroup, ...style.formGroupNoMarginBottom}}
                                     disabled={!this.state.hasPermission}

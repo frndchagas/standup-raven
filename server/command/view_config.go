@@ -80,6 +80,11 @@ func executeCommandViewConfig(args []string, context Context) (*model.CommandRes
 		windowCloseTimeText = conf.WindowCloseTime.Format("15:04")
 	}
 
+	postingModeText := "Scheduled Report"
+	if conf.PostingMode == config.PostingModeImmediate {
+		postingModeText = "Immediate"
+	}
+
 	text := fmt.Sprintf(
 		"### Standup Configuration\n\n"+
 			"| Setting | Value |\n"+
@@ -88,6 +93,7 @@ func executeCommandViewConfig(args []string, context Context) (*model.CommandRes
 			"| **Timezone** | %s |\n"+
 			"| **Window Open Time** | %s |\n"+
 			"| **Window Close Time** | %s |\n"+
+			"| **Posting Mode** | %s |\n"+
 			"| **Report Format** | %s |\n"+
 			"| **Schedule Enabled** | %s |\n"+
 			"| **Window Open Reminder** | %s |\n"+
@@ -98,6 +104,7 @@ func executeCommandViewConfig(args []string, context Context) (*model.CommandRes
 		conf.Timezone,
 		windowOpenTimeText,
 		windowCloseTimeText,
+		postingModeText,
 		conf.ReportFormat,
 		scheduleEnabledText,
 		windowOpenReminderText,
