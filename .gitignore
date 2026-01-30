@@ -5,7 +5,6 @@ server/vendor/
 .history/
 coverage.txt
 coverage.html
-webapp/sentry.properties
 test.json
 webapp.sha
 webapp.old.sha

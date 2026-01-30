@@ -2,9 +2,8 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import {MenuItem, SplitButton} from 'react-bootstrap';
 import style from './style.css';
-import SentryBoundary from '../../SentryBoundary';
 
-class TimePicker extends (SentryBoundary, React.PureComponent) {
+class TimePicker extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = TimePicker.getInitialState();

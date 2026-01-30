@@ -1,13 +1,12 @@
 import React from 'react';
 import _Switch from 'react-switch';
 const Switch = _Switch.default || _Switch;
-import SentryBoundary from '../../SentryBoundary';
 import color from 'color';
 import './style.css';
 
 const darkenRatio = 0.3;
 
-class ToggleSwitch extends (SentryBoundary, React.Component) {
+class ToggleSwitch extends React.Component {
     render() {
         return (
             <div className={'toggle-switch'} >

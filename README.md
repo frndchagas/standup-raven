@@ -78,8 +78,6 @@ The generated standup contains the names of members who have yet to fill their s
 
 * 🚦 [Getting Started](docs/getting_started.md)
 
-* 🐞 [Integrating Sentry](docs/sentry.md)
-
 ### Ops Guide
 
 * ⬇ [Installing](docs/installation.md)

@@ -5,7 +5,6 @@ go 1.24.11
 require (
 	github.com/agiledragon/gomonkey/v2 v2.14.0
 	github.com/dustin/go-humanize v1.0.1
-	github.com/getsentry/sentry-go v0.42.0
 	github.com/mattermost/mattermost/server/public v0.1.22
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1

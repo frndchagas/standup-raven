@@ -4,7 +4,6 @@ import {Alert, Button, FormControl, FormGroup, InputGroup, Modal, OverlayTrigger
 import request from 'superagent';
 import Constants from '../../constants';
 import reactStyles from './style';
-import SentryBoundary from '../../SentryBoundary';
 import * as HttpStatus from 'http-status-codes';
 import Cookies from 'js-cookie';
 
@@ -13,7 +12,7 @@ const {formatText, messageHtmlToComponent} = window.PostUtils;
 const standupModalCloseTimeout = 1000;
 const standupTaskDefaultRowCount = 5;
 
-class StandupModal extends (SentryBoundary, React.Component) {
+class StandupModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = StandupModal.getInitialState();
