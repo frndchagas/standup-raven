@@ -4,7 +4,6 @@ import {Alert, Button, FormControl, FormGroup, InputGroup, Modal, OverlayTrigger
 import request from 'superagent';
 import Constants from '../../constants';
 import reactStyles from './style';
-import SentryBoundary from '../../SentryBoundary';
 import * as HttpStatus from 'http-status-codes';
 import Cookies from 'js-cookie';
 
@@ -13,7 +12,7 @@ const {formatText, messageHtmlToComponent} = window.PostUtils;
 const standupModalCloseTimeout = 1000;
 const standupTaskDefaultRowCount = 5;
 
-class StandupModal extends (SentryBoundary, React.Component) {
+class StandupModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = StandupModal.getInitialState();
@@ -109,13 +108,18 @@ class StandupModal extends (SentryBoundary, React.Component) {
                 .withCredentials()
                 .end((err, result) => {
                     if (result.ok) {
-                        for (const sectionTitle of Object.keys(result.body.standup)) {
-                            if (this.state.standup[sectionTitle]) {
-                                for (let i = 0; i < result.body.standup[sectionTitle].length; ++i) {
-                                    this.state.standup[sectionTitle][`line${i + 1}`] = result.body.standup[sectionTitle][i];
+                        this.setState((prevState) => {
+                            const standup = {...prevState.standup};
+                            for (const sectionTitle of Object.keys(result.body.standup)) {
+                                if (standup[sectionTitle]) {
+                                    standup[sectionTitle] = {...standup[sectionTitle]};
+                                    for (let i = 0; i < result.body.standup[sectionTitle].length; ++i) {
+                                        standup[sectionTitle][`line${i + 1}`] = result.body.standup[sectionTitle][i];
+                                    }
                                 }
                             }
-                        }
+                            return {standup};
+                        });
                     } else if (result.status !== HttpStatus.NOT_FOUND) {
                         console.error(err);
                     }

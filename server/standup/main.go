@@ -78,6 +78,7 @@ type Config struct {
 	ReportFormat               string       `json:"reportFormat"`
 	Timezone                   string       `json:"timezone"`
 	RRuleString                string       `json:"rruleString"`
+	PostingMode                string       `json:"postingMode"`
 	Enabled                    bool         `json:"enabled"`
 	WindowOpenReminderEnabled  bool         `json:"windowOpenReminderEnabled"`
 	WindowCloseReminderEnabled bool         `json:"windowCloseReminderEnabled"`
@@ -110,6 +111,10 @@ func (sc *Config) IsValid() error {
 	reportFormat := sc.ReportFormat
 	if !funk.Contains(config.ReportFormats, reportFormat) {
 		return fmt.Errorf("invalid report format specified. Report format should be one of: \"%s\"", strings.Join(config.ReportFormats, "\", \""))
+	}
+
+	if sc.PostingMode != "" && !funk.Contains(config.PostingModes, sc.PostingMode) {
+		return fmt.Errorf("invalid posting mode specified. Posting mode should be one of: \"%s\"", strings.Join(config.PostingModes, "\", \""))
 	}
 
 	if _, err := time.LoadLocation(sc.Timezone); err != nil {

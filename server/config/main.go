@@ -2,8 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"errors"
-	"strings"
 	"time"
 
 	"github.com/mattermost/mattermost/server/public/plugin"
@@ -24,6 +22,9 @@ const (
 
 	ReportFormatUserAggregated = "user_aggregated"
 	ReportFormatTypeAggregated = "type_aggregated"
+
+	PostingModeScheduled = "scheduled"
+	PostingModeImmediate = "immediate"
 
 	CacheKeyPrefixNotificationStatus = "notif_status"
 	CacheKeyPrefixTeamStandupConfig  = "standup_config_"
@@ -51,19 +52,17 @@ var (
 	config        atomic.Value
 	Mattermost    plugin.API
 	ReportFormats = []string{ReportFormatUserAggregated, ReportFormatTypeAggregated}
+	PostingModes  = []string{PostingModeScheduled, PostingModeImmediate}
 )
 
 type Configuration struct {
 	// derived attributes
-	Location        *time.Location `json:"location"`
-	BotUserID       string         `json:"botUserId"`
-	SentryServerDSN string         `json:"sentryServerDSN"`
-	SentryWebappDSN string         `json:"sentryWebappDSN"`
+	Location  *time.Location `json:"location"`
+	BotUserID string         `json:"botUserId"`
 
 	TimeZone                string `json:"timeZone"`
 	PluginVersion           string `json:"plugin_version"`
 	PermissionSchemaEnabled bool   `json:"permissionSchemaEnabled"`
-	EnableErrorReporting    bool   `json:"enableErrorReporting"`
 }
 
 func GetConfig() *Configuration {
@@ -79,20 +78,6 @@ func (c *Configuration) ProcessConfiguration() error {
 	if err != nil {
 		Mattermost.LogError("Couldn't load location in time " + err.Error())
 		return err
-	}
-
-	c.SentryServerDSN = strings.TrimSpace(c.SentryServerDSN)
-
-	if c.EnableErrorReporting && len(c.SentryServerDSN) == 0 {
-		Mattermost.LogError("Sentry Server DSN cannot be empty if error reporting is enabled")
-		return errors.New("sentry server DSN cannot be empty if error reporting is enabled")
-	}
-
-	c.SentryWebappDSN = strings.TrimSpace(c.SentryWebappDSN)
-
-	if c.EnableErrorReporting && len(c.SentryWebappDSN) == 0 {
-		Mattermost.LogError("Sentry Webapp DSN cannot be empty if error reporting is enabled")
-		return errors.New("sentry webapp DSN cannot be empty if error reporting is enabled")
 	}
 
 	c.Location = location
@@ -115,6 +100,5 @@ func (c *Configuration) Sanitize() *Configuration {
 	clone := c.Clone()
 	clone.BotUserID = ""
 	clone.Location = nil
-	clone.SentryServerDSN = ""
 	return clone
 }

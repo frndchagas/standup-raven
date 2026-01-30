@@ -1,13 +1,13 @@
 import React from 'react';
 import _Switch from 'react-switch';
 const Switch = _Switch.default || _Switch;
-import SentryBoundary from '../../SentryBoundary';
+import PropTypes from 'prop-types';
 import color from 'color';
 import './style.css';
 
 const darkenRatio = 0.3;
 
-class ToggleSwitch extends (SentryBoundary, React.Component) {
+class ToggleSwitch extends React.Component {
     render() {
         return (
             <div className={'toggle-switch'} >
@@ -28,5 +28,14 @@ class ToggleSwitch extends (SentryBoundary, React.Component) {
         );
     }
 }
+
+ToggleSwitch.propTypes = {
+    disabled: PropTypes.bool,
+    onChange: PropTypes.func.isRequired,
+    checked: PropTypes.bool.isRequired,
+    theme: PropTypes.shape({
+        linkColor: PropTypes.string.isRequired,
+    }).isRequired,
+};
 
 export default ToggleSwitch;

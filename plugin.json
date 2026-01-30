@@ -34,13 +34,6 @@
         "display_name": "Enable Permission Schema",
         "type": "bool",
         "help_text": "Requires Mattermost Enterprise Edition. If enabled, only channel admins, team admins or system admins are allowed to configure standup for a channel or update it."
-      },
-      {
-        "key": "enableErrorReporting",
-        "display_name": "Enable Error Reporting",
-        "type": "bool",
-        "default": false,
-        "help_text": "Help improve Standup Raven by sending error reports and diagnostic information. Requires valid Sentry DSNs to be configured at build time. No messages or personal data is stored."
       }
     ]
   }

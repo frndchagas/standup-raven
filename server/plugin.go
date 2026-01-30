@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/mattermost/mattermost/server/public/plugin"
 	"github.com/mattermost/mattermost/server/public/pluginapi"
@@ -24,8 +23,6 @@ import (
 // ldflag variables
 
 var PluginVersion string
-var SentryServerDSN string
-var SentryWebappDSN string
 var EncodedPluginIcon string
 
 type Plugin struct {
@@ -107,10 +104,6 @@ func (p *Plugin) OnConfigurationChange() error {
 			return err
 		}
 		config.SetConfig(&configuration)
-
-		if err := p.initSentry(); err != nil {
-			config.Mattermost.LogError(err.Error())
-		}
 	}
 	return nil
 }
@@ -122,8 +115,6 @@ func (p *Plugin) setInjectedVars(configuration *config.Configuration) {
 	} else {
 		configuration.PluginVersion = "dev"
 	}
-	configuration.SentryWebappDSN = SentryWebappDSN
-	configuration.SentryServerDSN = SentryServerDSN
 }
 
 func (p *Plugin) RegisterCommands() error {
@@ -202,9 +193,6 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 
 	if err := endpoint.Execute(w, requestToUse); err != nil {
 		logger.Error("Error occurred processing "+requestToUse.URL.String(), err, map[string]interface{}{"request": d})
-		sentry.WithScope(func(scope *sentry.Scope) {
-			sentry.CaptureException(err)
-		})
 	}
 }
 
@@ -233,28 +221,6 @@ func (p *Plugin) Run() error {
 
 	p.job = job
 	return nil
-}
-
-func (p *Plugin) initSentry() error {
-	conf := config.GetConfig()
-
-	if !conf.EnableErrorReporting {
-		return nil
-	}
-
-	err := sentry.Init(sentry.ClientOptions{
-		Dsn: conf.SentryServerDSN,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	sentry.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetTag("pluginComponent", "server")
-	})
-
-	return err
 }
 
 func main() {

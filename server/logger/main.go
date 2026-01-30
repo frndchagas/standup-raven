@@ -3,8 +3,6 @@ package logger
 import (
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
-
 	"github.com/standup-raven/standup-raven/server/config"
 )
 
@@ -32,12 +30,6 @@ func Info(msg string, err error, keyValuePairs ...interface{}) {
 }
 
 func Error(msg string, err error, extraData map[string]interface{}) {
-	sentry.WithScope(func(scope *sentry.Scope) {
-		scope.SetExtra("message", msg)
-		scope.SetExtras(extraData)
-		sentry.CaptureException(err)
-	})
-
 	if config.Mattermost != nil {
 		errMsg := msg
 		if err != nil {

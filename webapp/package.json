@@ -22,7 +22,6 @@
     "what-the-changelog": "^1.5.0"
   },
   "dependencies": {
-    "@sentry/browser": "^5.27.3",
     "color": "^3.1.2",
     "create-react-class": "^15.7.0",
     "csslint": "^1.0.5",

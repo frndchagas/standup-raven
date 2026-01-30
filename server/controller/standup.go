@@ -5,10 +5,12 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/standup-raven/standup-raven/server/config"
 	"github.com/standup-raven/standup-raven/server/controller/middleware"
 	"github.com/standup-raven/standup-raven/server/logger"
 	"github.com/standup-raven/standup-raven/server/otime"
 	"github.com/standup-raven/standup-raven/server/standup"
+	"github.com/standup-raven/standup-raven/server/standup/notification"
 )
 
 var getStandup = &Endpoint{
@@ -59,6 +61,13 @@ func executeSaveStandup(userID string, w http.ResponseWriter, r *http.Request) e
 	if err := standup.SaveUserStandup(userStandup); err != nil {
 		http.Error(w, "Failed to save standup", http.StatusBadRequest)
 		return err
+	}
+
+	standupConfig, err := standup.GetStandupConfig(userStandup.ChannelID)
+	if err == nil && standupConfig != nil && standupConfig.PostingMode == config.PostingModeImmediate {
+		if postErr := notification.PostIndividualStandup(userStandup); postErr != nil {
+			logger.Error("Failed to post individual standup, but standup was saved", postErr, nil)
+		}
 	}
 
 	if _, err := w.Write([]byte("ok")); err != nil {

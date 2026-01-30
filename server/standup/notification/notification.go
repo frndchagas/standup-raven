@@ -336,8 +336,16 @@ func filterChannelNotificationImpl(channelIDs map[string]string) ([]string, []st
 		// the notifications were missed in the past
 
 		if status := shouldSendStandupReport(notificationStatus, standupConfig); status == ChannelNotificationStatusSend {
-			logger.Debug(fmt.Sprintf("Channel [%s] needs standup report", channelID), nil)
-			standupReportChannels = append(standupReportChannels, channelID)
+			if standupConfig.PostingMode == config.PostingModeImmediate {
+				// For immediate mode, mark report as sent without generating an aggregated report
+				notificationStatus.StandupReportSent = true
+				if err := SetNotificationStatus(channelID, notificationStatus); err != nil {
+					logger.Error("Couldn't set notification status for immediate channel", err, map[string]interface{}{"channelID": channelID})
+				}
+			} else {
+				logger.Debug(fmt.Sprintf("Channel [%s] needs standup report", channelID), nil)
+				standupReportChannels = append(standupReportChannels, channelID)
+			}
 		} else if status == ChannelNotificationStatusSent {
 			// pass
 		} else if shouldSendWindowCloseNotification(notificationStatus, standupConfig) == ChannelNotificationStatusSend {
@@ -716,6 +724,102 @@ func deleteReminderPosts(channelID string) error {
 		return errors.New(appErr.Error())
 	}
 
+	return nil
+}
+
+// PostIndividualStandup posts or updates a user's standup individually in the channel.
+// Used when posting mode is set to "immediate".
+func PostIndividualStandup(userStandup *standup.UserStandup) error {
+	standupConfig, err := standup.GetStandupConfig(userStandup.ChannelID)
+	if err != nil {
+		return err
+	}
+	if standupConfig == nil {
+		return errors.New("standup not configured for channel: " + userStandup.ChannelID)
+	}
+
+	post, err := generateIndividualStandupPost(standupConfig, userStandup)
+	if err != nil {
+		return err
+	}
+
+	existingPostID, err := getIndividualStandupPostID(userStandup.UserID, userStandup.ChannelID, standupConfig.Timezone)
+	if err != nil {
+		return err
+	}
+
+	if existingPostID != "" {
+		post.Id = existingPostID
+		_, appErr := config.Mattermost.UpdatePost(post)
+		if appErr != nil {
+			logger.Error("Couldn't update individual standup post", appErr, map[string]interface{}{
+				"userID":    userStandup.UserID,
+				"channelID": userStandup.ChannelID,
+				"postID":    existingPostID,
+			})
+			return errors.New(appErr.Error())
+		}
+	} else {
+		createdPost, appErr := config.Mattermost.CreatePost(post)
+		if appErr != nil {
+			logger.Error("Couldn't create individual standup post", appErr, map[string]interface{}{
+				"userID":    userStandup.UserID,
+				"channelID": userStandup.ChannelID,
+			})
+			return errors.New(appErr.Error())
+		}
+		if err := saveIndividualStandupPostID(userStandup.UserID, userStandup.ChannelID, standupConfig.Timezone, createdPost.Id); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func generateIndividualStandupPost(standupConfig *standup.Config, userStandup *standup.UserStandup) (*model.Post, error) {
+	userDisplayName, err := getUserDisplayName(userStandup.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	now := otime.Now(standupConfig.Timezone)
+	header := fmt.Sprintf("#### %s %s — *%s*\n\n", util.UserIcon(userStandup.UserID), userDisplayName, now.Format("2 Jan 2006"))
+
+	body := ""
+	for _, sectionTitle := range standupConfig.Sections {
+		if userStandup.Standup[sectionTitle] == nil || len(*userStandup.Standup[sectionTitle]) == 0 {
+			continue
+		}
+		body += fmt.Sprintf("##### %s\n", sectionTitle)
+		body += "1. " + strings.Join(*userStandup.Standup[sectionTitle], "\n1. ") + "\n\n"
+	}
+
+	return &model.Post{
+		ChannelId: userStandup.ChannelID,
+		UserId:    config.GetConfig().BotUserID,
+		Message:   header + body,
+	}, nil
+}
+
+func getIndividualStandupPostID(userID, channelID, timezone string) (string, error) {
+	key := fmt.Sprintf("immediate_post_%s_%s_%s", otime.Now(timezone).GetDateString(), channelID, userID)
+	data, appErr := config.Mattermost.KVGet(util.GetKeyHash(key))
+	if appErr != nil {
+		logger.Error("Couldn't fetch individual standup post ID from KV store", appErr, nil)
+		return "", errors.New(appErr.Error())
+	}
+	if len(data) == 0 {
+		return "", nil
+	}
+	return string(data), nil
+}
+
+func saveIndividualStandupPostID(userID, channelID, timezone, postID string) error {
+	key := fmt.Sprintf("immediate_post_%s_%s_%s", otime.Now(timezone).GetDateString(), channelID, userID)
+	if appErr := config.Mattermost.KVSet(util.GetKeyHash(key), []byte(postID)); appErr != nil {
+		logger.Error("Couldn't save individual standup post ID to KV store", appErr, nil)
+		return errors.New(appErr.Error())
+	}
 	return nil
 }
 

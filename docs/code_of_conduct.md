@@ -97,7 +97,7 @@ This is a general workflow for anyone who would like to contribute to the Standu
         │   ├── command - contains logic for all the slash commands
         │   ├── config - contains all plugin configurations
         │   ├── controller - contains all HTTP endpoints, used by webapp componnet to communicate
-        │   ├── logger - contains logger binded with Sentry API
+        │   ├── logger - contains logging utilities
         │   ├── otime - custom time class with functions for printing time in specific formats
         │   ├── standup - contains the core logic for all standup management
         │   ├── util - general, abstract utilities

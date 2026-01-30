@@ -5,20 +5,10 @@ import Actions from './actions';
 import StandupModal from './components/standupModal';
 import ConfigModal from './components/configModal';
 import Constants from './constants';
-import * as Sentry from '@sentry/browser';
-import utils from './utils';
-import * as RavenClient from './raven-client';
 
 class StandupRavenPlugin {
     // eslint-disable-next-line class-methods-use-this
-    async initialize(registry, store) {
-        const siteURL = utils.getValueSafely(store.getState(), 'entities.general.config.SiteURL');
-        const pluginConfig = await RavenClient.Config.getPluginConfig(siteURL);
-
-        if (pluginConfig.enableErrorReporting) {
-            initSentry(pluginConfig.sentryWebappDSN);
-        }
-
+    initialize(registry, store) {
         registry.registerChannelHeaderButtonAction(
             <ChannelHeaderButtonIcon/>,
             (channel) => store.dispatch(Actions.openStandupModal(channel.id)),
@@ -57,16 +47,6 @@ class StandupRavenPlugin {
 
         registry.registerReducer(reducer);
     }
-}
-
-function initSentry(dsn) {
-    Sentry.init({
-        dsn,
-    });
-
-    Sentry.configureScope(((scope) => {
-        scope.setTag('pluginComponent', 'webapp');
-    }));
 }
 
 window.registerPlugin(Constants.PLUGIN_NAME, new StandupRavenPlugin());

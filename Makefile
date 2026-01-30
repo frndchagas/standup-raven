@@ -51,8 +51,12 @@ PLUGINNAME=$(call GetPluginId)
 PLUGINVERSION=$(call GetPluginVersion)
 PACKAGENAME=mattermost-plugin-$(PLUGINNAME)-$(PLUGINVERSION)
 
-LDFLAGS=-ldflags "-X 'main.PluginVersion=$(PLUGINVERSION)' -X 'main.SentryServerDSN=$(SERVER_DSN)' -X 'main.SentryWebappDSN=$(WEBAPP_DSN)' -X 'main.EncodedPluginIcon=data:image/svg+xml;base64,$(shell base64 < webapp/src/assets/images/logo.svg | tr -d '\n')'"
+LDFLAGS=-ldflags "-X 'main.PluginVersion=$(PLUGINVERSION)' -X 'main.EncodedPluginIcon=data:image/svg+xml;base64,$(shell base64 < webapp/src/assets/images/logo.svg | tr -d '\n')'"
+ifdef CI
+GCFLAGS=
+else
 GCFLAGS=-gcflags 'all=-N -l'
+endif
 
 # All target platforms
 PLATFORMS=linux-amd64 linux-arm64 darwin-amd64 darwin-arm64 windows-amd64
@@ -117,7 +121,10 @@ vendor: go.sum
 
 ## Build targets
 
-build-server-%:
+dist/intermediate:
+	mkdir -p dist/intermediate
+
+build-server-%: | dist/intermediate
 	$(eval GOOS=$(firstword $(subst -, ,$*)))
 	$(eval GOARCH=$(lastword $(subst -, ,$*)))
 	$(eval EXT=$(if $(filter windows,$(GOOS)),.exe,))
