@@ -24,6 +24,7 @@ jobs:
         with:
           version: v2.1.6
           args: ./server/...
+          only-new-issues: true
 
       - name: Install webapp dependencies
         run: cd webapp && bun install --frozen-lockfile
