@@ -121,20 +121,20 @@ func TestSendNotificationsAndReports(t *testing.T) {
 	}
 
 	GetNotificationStatus = func(channelID string) (*ChannelNotificationStatus, error) {
-		switch {
-		case channelID == "channel_1":
+		switch channelID {
+		case "channel_1":
 			return &ChannelNotificationStatus{
 				StandupReportSent:           false,
 				WindowOpenNotificationSent:  false,
 				WindowCloseNotificationSent: false,
 			}, nil
-		case channelID == "channel_2":
+		case "channel_2":
 			return &ChannelNotificationStatus{
 				StandupReportSent:           false,
 				WindowOpenNotificationSent:  true,
 				WindowCloseNotificationSent: false,
 			}, nil
-		case channelID == "channel_3":
+		case "channel_3":
 			return &ChannelNotificationStatus{
 				StandupReportSent:           false,
 				WindowOpenNotificationSent:  true,
@@ -153,8 +153,8 @@ func TestSendNotificationsAndReports(t *testing.T) {
 	}
 
 	testutil.Patch(standup.GetStandupConfig, func(channelID string) (*standup.Config, error) {
-		switch {
-		case channelID == "channel_1":
+		switch channelID {
+		case "channel_1":
 			windowOpenTime := otime.OTime{
 				Time: otime.Now("Asia/Kolkata").Add(-1 * time.Hour),
 			}
@@ -176,7 +176,7 @@ func TestSendNotificationsAndReports(t *testing.T) {
 				RRule:                      parsedRule,
 			}
 			return standupConfig, nil
-		case channelID == "channel_2":
+		case "channel_2":
 			windowOpenTime := otime.OTime{
 				Time: otime.Now("Asia/Kolkata").Add(-1 * time.Hour),
 			}
@@ -197,7 +197,7 @@ func TestSendNotificationsAndReports(t *testing.T) {
 				RRuleString:                "FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR,SA,SU;COUNT=10",
 				RRule:                      parsedRule,
 			}, nil
-		case channelID == "channel_3":
+		case "channel_3":
 			windowOpenTime := otime.OTime{
 				Time: otime.Now("Asia/Kolkata").Add(-1 * time.Hour),
 			}
@@ -225,11 +225,12 @@ func TestSendNotificationsAndReports(t *testing.T) {
 	})
 
 	SetNotificationStatus = func(channelID string, status *ChannelNotificationStatus) error {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			return nil
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			return nil
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			return nil
 		}
 
@@ -238,15 +239,16 @@ func TestSendNotificationsAndReports(t *testing.T) {
 	}
 
 	testutil.Patch(standup.GetUserStandup, func(userID, channelID string, date otime.OTime) (*standup.UserStandup, error) {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
@@ -325,19 +327,20 @@ func TestSendNotificationsAndReports_SendStandupReport_Error(t *testing.T) {
 	}
 
 	GetNotificationStatus = func(channelID string) (*ChannelNotificationStatus, error) {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			return &ChannelNotificationStatus{
 				StandupReportSent:           false,
 				WindowOpenNotificationSent:  false,
 				WindowCloseNotificationSent: false,
 			}, nil
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			return &ChannelNotificationStatus{
 				StandupReportSent:           false,
 				WindowOpenNotificationSent:  true,
 				WindowCloseNotificationSent: false,
 			}, nil
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			return &ChannelNotificationStatus{
 				StandupReportSent:           false,
 				WindowOpenNotificationSent:  true,
@@ -429,11 +432,12 @@ func TestSendNotificationsAndReports_SendStandupReport_Error(t *testing.T) {
 	})
 
 	SetNotificationStatus = func(channelID string, status *ChannelNotificationStatus) error {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			return nil
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			return nil
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			return nil
 		}
 
@@ -442,15 +446,16 @@ func TestSendNotificationsAndReports_SendStandupReport_Error(t *testing.T) {
 	}
 
 	testutil.Patch(standup.GetUserStandup, func(userID, channelID string, date otime.OTime) (*standup.UserStandup, error) {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
@@ -575,11 +580,12 @@ func TestSendNotificationsAndReports_GetNotificationStatus_NoData(t *testing.T) 
 	})
 
 	SetNotificationStatus = func(channelID string, status *ChannelNotificationStatus) error {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			return nil
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			return nil
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			return nil
 		}
 
@@ -588,15 +594,16 @@ func TestSendNotificationsAndReports_GetNotificationStatus_NoData(t *testing.T) 
 	}
 
 	testutil.Patch(standup.GetUserStandup, func(userID, channelID string, date otime.OTime) (*standup.UserStandup, error) {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
@@ -1052,11 +1059,12 @@ func TestSendNotificationsAndReports_WindowOpenNotificationSent_Sent(t *testing.
 	})
 
 	SetNotificationStatus = func(channelID string, status *ChannelNotificationStatus) error {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			return nil
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			return nil
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			return nil
 		}
 
@@ -1065,15 +1073,16 @@ func TestSendNotificationsAndReports_WindowOpenNotificationSent_Sent(t *testing.
 	}
 
 	testutil.Patch(standup.GetUserStandup, func(userID, channelID string, date otime.OTime) (*standup.UserStandup, error) {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}
@@ -3459,11 +3468,12 @@ func TestSendNotificationsAndReports_MemberNoStandup(t *testing.T) {
 	})
 
 	SetNotificationStatus = func(channelID string, status *ChannelNotificationStatus) error {
-		if channelID == "channel_1" {
+		switch channelID {
+		case "channel_1":
 			return nil
-		} else if channelID == "channel_2" {
+		case "channel_2":
 			return nil
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			return nil
 		}
 
@@ -3472,19 +3482,22 @@ func TestSendNotificationsAndReports_MemberNoStandup(t *testing.T) {
 	}
 
 	testutil.Patch(standup.GetUserStandup, func(userID, channelID string, date otime.OTime) (*standup.UserStandup, error) {
-		if channelID == "channel_1" {
-			if userID == "user_id_1" {
+		switch channelID {
+		case "channel_1":
+			switch userID {
+			case "user_id_1":
 				return nil, nil
-			} else if userID == "user_id_2" {
+			case "user_id_2":
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_2" {
-			if userID == "user_id_1" {
+		case "channel_2":
+			switch userID {
+			case "user_id_1":
 				return nil, nil
-			} else if userID == "user_id_2" {
+			case "user_id_2":
 				return &standup.UserStandup{}, nil
 			}
-		} else if channelID == "channel_3" {
+		case "channel_3":
 			if userID == "user_id_1" || userID == "user_id_2" {
 				return &standup.UserStandup{}, nil
 			}

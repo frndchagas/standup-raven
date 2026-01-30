@@ -28,6 +28,9 @@ linters:
         - ifElseChain
   exclusions:
     rules:
+      - text: 'declaration of "err" shadows declaration at'
+        linters:
+          - govet
       - path: server/standup/main.go
         linters:
           - govet
