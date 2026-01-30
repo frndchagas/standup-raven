@@ -3,15 +3,21 @@
   "version": "3.3.2",
   "name": "Standup Raven",
   "description": "A Mattermost plugin for communicating daily standups across teams",
-  "homepage_url": "https://standupraven.com/",
-  "support_url": "https://github.com/standup-raven/standup-raven/issues",
+  "homepage_url": "https://github.com/frndchagas/standup-raven",
+  "support_url": "https://github.com/frndchagas/standup-raven/issues",
   "icon_path": "webapp/logo.svg",
   "min_server_version": "9.0.0",
   "webapp": {
     "bundle_path": "webapp/main.js"
   },
   "server": {
-    "executable": "server/plugin.exe"
+    "executables": {
+      "linux-amd64": "server/plugin-linux-amd64",
+      "linux-arm64": "server/plugin-linux-arm64",
+      "darwin-amd64": "server/plugin-darwin-amd64",
+      "darwin-arm64": "server/plugin-darwin-arm64",
+      "windows-amd64": "server/plugin-windows-amd64.exe"
+    }
   },
   "settings_schema": {
     "settings": [

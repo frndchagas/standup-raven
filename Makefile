@@ -98,7 +98,7 @@ fix-style-webapp:
 
 test-server: vendor
 	echo Running server tests
-	go test -gcflags='all=-l' -v -coverprofile=coverage.txt ./...
+	GOTOOLCHAIN=go1.24.11 go test -gcflags='all=-l' -v -coverprofile=coverage.txt ./...
 
 test: test-server
 
@@ -143,12 +143,11 @@ package: build-server build-webapp
 		GOARCH=$$(echo $$platform | cut -d- -f2); \
 		EXT=""; \
 		if [ "$$GOOS" = "windows" ]; then EXT=".exe"; fi; \
-		cp dist/intermediate/plugin_$${GOOS}_$${GOARCH}$${EXT} dist/$(PLUGINNAME)/server/plugin.exe; \
-		cd dist && tar -zcf $(PACKAGENAME)-$$platform.tar.gz $(PLUGINNAME)/*; \
-		cd ..; \
-		echo "Built: dist/$(PACKAGENAME)-$$platform.tar.gz"; \
+		cp dist/intermediate/plugin_$${GOOS}_$${GOARCH}$${EXT} dist/$(PLUGINNAME)/server/plugin-$$platform$${EXT}; \
 	done
+	cd dist && tar -zcf $(PACKAGENAME).tar.gz $(PLUGINNAME)/*
 	$(call RemoveTimeZoneOptions)
+	@echo "Built: dist/$(PACKAGENAME).tar.gz"
 
 dist: vendor .webinstall package
 	@echo "Distribution packages ready"
@@ -157,8 +156,7 @@ dist: vendor .webinstall package
 
 deploy:
 	@echo "Installing plugin via mmctl"
-	@PLATFORM=$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/'); \
-	TARBALL="dist/$(PACKAGENAME)-$$PLATFORM.tar.gz"; \
+	@TARBALL="dist/$(PACKAGENAME).tar.gz"; \
 	if [ ! -f "$$TARBALL" ]; then \
 		echo "Error: $$TARBALL not found. Run 'make dist' first."; \
 		exit 1; \
