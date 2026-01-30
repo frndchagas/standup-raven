@@ -60,7 +60,7 @@ class ChannelHeaderButtonIcon extends React.Component {
                 parent: ref.parentNode,
             });
         }
-    }
+    };
 
     isChannelHeaderButtonInDropdown = () => {
         try {
@@ -72,7 +72,7 @@ class ChannelHeaderButtonIcon extends React.Component {
         } catch (e) {
             return false;
         }
-    }
+    };
 
     getIconParentToHide = () => {
         // In Mattermost v9+ the button may be rendered inside the app bar
@@ -86,7 +86,7 @@ class ChannelHeaderButtonIcon extends React.Component {
             return this.state.parent.parentNode.parentNode;
         }
         return this.state.parent;
-    }
+    };
 
     findAppBarParent = () => {
         let node = this.state.parent;
@@ -97,7 +97,7 @@ class ChannelHeaderButtonIcon extends React.Component {
             node = node.parentNode;
         }
         return null;
-    }
+    };
 
     render() {
         if (this.state.parent) {
