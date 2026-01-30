@@ -2,23 +2,9 @@ version: "2"
 
 run:
   timeout: 5m
-  modules-download-mode: readonly
-
-linters-settings:
-  gofmt:
-    simplify: true
-  goimports:
-    local-prefixes: github.com/standup-raven/standup-raven/server
-  govet:
-    enable-all: true
-  misspell:
-    locale: US
-  gocritic:
-    disabled-checks:
-      - ifElseChain
 
 linters:
-  disable-all: true
+  default: none
   enable:
     - bodyclose
     - errcheck
@@ -32,18 +18,33 @@ linters:
     - unconvert
     - unused
     - whitespace
-  formatters:
-    enable:
-      - gofmt
-      - goimports
+  settings:
+    govet:
+      enable-all: true
+    misspell:
+      locale: US
+    gocritic:
+      disabled-checks:
+        - ifElseChain
+  exclusions:
+    rules:
+      - path: server/standup/main.go
+        linters:
+          - govet
+      - path: _test\.go
+        linters:
+          - bodyclose
+    presets:
+      - comments
+      - std-error-handling
+      - common-false-positives
 
-issues:
-  exclude:
-    - 'declaration of "(err|ctx)" shadows declaration at'
-  exclude-rules:
-    - path: server/standup/main.go
-      linters:
-        - govet
-    - path: _test\.go
-      linters:
-        - bodyclose
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+    goimports:
+      local-prefixes: github.com/standup-raven/standup-raven/server

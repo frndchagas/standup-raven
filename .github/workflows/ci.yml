@@ -15,14 +15,14 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.24'
 
       - uses: oven-sh/setup-bun@v2
 
       - name: Install golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.57.2
+          version: v2.1.6
           args: ./server/...
 
       - name: Install webapp dependencies
@@ -42,10 +42,10 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.24'
 
       - name: Run server tests
-        run: go test -gcflags=-l -v -coverprofile=coverage.txt ./...
+        run: go test -gcflags='all=-l' -v -coverprofile=coverage.txt ./...
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
@@ -63,7 +63,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.24'
 
       - uses: oven-sh/setup-bun@v2
 
