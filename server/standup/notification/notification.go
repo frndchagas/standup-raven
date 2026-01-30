@@ -388,7 +388,7 @@ func shouldSendWindowCloseNotification(notificationStatus *ChannelNotificationSt
 		return ChannelNotificationStatusSent
 	}
 
-	windowDuration := standupConfig.WindowCloseTime.GetTime(standupConfig.Timezone).Time.Sub(standupConfig.WindowOpenTime.GetTime(standupConfig.Timezone).Time)
+	windowDuration := standupConfig.WindowCloseTime.GetTime(standupConfig.Timezone).Sub(standupConfig.WindowOpenTime.GetTime(standupConfig.Timezone).Time)
 	targetDurationSeconds := windowDuration.Seconds() * config.WindowCloseNotificationDurationPercentage
 	targetDuration, _ := time.ParseDuration(fmt.Sprintf("%fs", targetDurationSeconds))
 

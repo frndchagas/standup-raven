@@ -99,7 +99,7 @@ func (sc *Config) IsValid() error {
 		return errors.New("window close time cannot be empty")
 	}
 
-	if sc.WindowOpenTime.Time.After(sc.WindowCloseTime.Time) {
+	if sc.WindowOpenTime.After(sc.WindowCloseTime.Time) {
 		return errors.New("window open time cannot be after window close time")
 	}
 
