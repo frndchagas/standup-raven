@@ -1,6 +1,7 @@
 import React from 'react';
 import _Switch from 'react-switch';
 const Switch = _Switch.default || _Switch;
+import PropTypes from 'prop-types';
 import color from 'color';
 import './style.css';
 
@@ -27,5 +28,14 @@ class ToggleSwitch extends React.Component {
         );
     }
 }
+
+ToggleSwitch.propTypes = {
+    disabled: PropTypes.bool,
+    onChange: PropTypes.func.isRequired,
+    checked: PropTypes.bool.isRequired,
+    theme: PropTypes.shape({
+        linkColor: PropTypes.string.isRequired,
+    }).isRequired,
+};
 
 export default ToggleSwitch;

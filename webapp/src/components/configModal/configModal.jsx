@@ -629,6 +629,7 @@ ConfigModal.propTypes = {
     visible: PropTypes.bool,
     siteURL: PropTypes.string.isRequired,
     isGuest: PropTypes.bool.isRequired,
+    theme: PropTypes.object.isRequired,
 };
 
 export default ConfigModal;
