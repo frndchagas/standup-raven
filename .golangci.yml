@@ -47,4 +47,5 @@ formatters:
     gofmt:
       simplify: true
     goimports:
-      local-prefixes: github.com/standup-raven/standup-raven/server
+      local-prefixes:
+        - github.com/standup-raven/standup-raven/server
