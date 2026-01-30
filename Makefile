@@ -146,7 +146,7 @@ buildserver:
 		FILES_MATCH=false;\
 	fi;\
 	ARTIFACTS_EXIST=false;\
-	if [[ -f ./dist/intermediate/plugin_linux_amd64 && -f ./dist/intermediate/plugin_darwin_amd64 && -f ./dist/intermediate/plugin_windows_amd64.exe ]]; then\
+	if [[ -f ./dist/intermediate/plugin_linux_amd64 && -f ./dist/intermediate/plugin_darwin_amd64 && -f ./dist/intermediate/plugin_darwin_arm64 && -f ./dist/intermediate/plugin_windows_amd64.exe ]]; then\
 		ARTIFACTS_EXIST=true;\
 	else\
 		ARTIFACTS_EXIST=false;\
@@ -162,7 +162,7 @@ buildserver:
 		cd server;\
 		GO111MODULE=off go get github.com/mitchellh/gox;\
 		cd ..;\
-		$(shell go env GOPATH)/bin/gox -ldflags="-X 'main.PluginVersion=$(PLUGINVERSION)' -X 'main.SentryServerDSN=$(SERVER_DSN)' -X 'main.SentryWebappDSN=$(WEBAPP_DSN)' -X 'main.EncodedPluginIcon=data:image/svg+xml;base64,`base64 webapp/src/assets/images/logo.svg`' " -osarch='darwin/amd64 linux/amd64 windows/amd64' -gcflags='all=-N -l' -output 'dist/intermediate/plugin_{{.OS}}_{{.Arch}}' ./server;\
+		$(shell go env GOPATH)/bin/gox -ldflags="-X 'main.PluginVersion=$(PLUGINVERSION)' -X 'main.SentryServerDSN=$(SERVER_DSN)' -X 'main.SentryWebappDSN=$(WEBAPP_DSN)' -X 'main.EncodedPluginIcon=data:image/svg+xml;base64,`base64 webapp/src/assets/images/logo.svg`' " -osarch='darwin/amd64 darwin/arm64 linux/amd64 windows/amd64' -gcflags='all=-N -l' -output 'dist/intermediate/plugin_{{.OS}}_{{.Arch}}' ./server;\
 	fi
 
 buildwebapp:
@@ -209,31 +209,21 @@ package:
 		SERVER_CHANGED=true;\
 	fi;\
 	ARTIFACTS_MISSING=false;\
-	if [[ -f dist/$(PACKAGENAME)-linux-amd64.tar.gz && -f dist/$(PACKAGENAME)-darwin-amd64.tar.gz && dist/$(PACKAGENAME)-windows-amd64.tar.gz ]]; then\
+	if [ -f dist/$(PACKAGENAME).tar.gz ]; then\
 		ARTIFACTS_MISSING=false;\
 	else\
 		ARTIFACTS_MISSING=true;\
 	fi;\
 	if $$WEBAPP_CHANGED || $$SERVER_CHANGED || $$ARTIFACTS_MISSING; then\
-		mkdir -p dist/$(PLUGINNAME);\
-		cp plugin.json dist/$(PLUGINNAME)/;\
 		mkdir -p dist/$(PLUGINNAME)/server;\
-		# build darwin artifact\
-		pwd;\
-		cp dist/intermediate/plugin_darwin_amd64 dist/$(PLUGINNAME)/server/plugin.exe;\
-		cd dist && tar -zcvf $(PACKAGENAME)-darwin-amd64.tar.gz $(PLUGINNAME)/*;\
+		cp plugin.json dist/$(PLUGINNAME)/;\
+		cp dist/intermediate/plugin_linux_amd64 dist/$(PLUGINNAME)/server/plugin-linux-amd64;\
+		cp dist/intermediate/plugin_darwin_amd64 dist/$(PLUGINNAME)/server/plugin-darwin-amd64;\
+		cp dist/intermediate/plugin_darwin_arm64 dist/$(PLUGINNAME)/server/plugin-darwin-arm64;\
+		cp dist/intermediate/plugin_windows_amd64.exe dist/$(PLUGINNAME)/server/plugin-windows-amd64.exe;\
+		cd dist && tar -zcvf $(PACKAGENAME).tar.gz $(PLUGINNAME)/*;\
 		cd ..;\
-		# build linux artifact\
-		cp dist/intermediate/plugin_linux_amd64 dist/$(PLUGINNAME)/server/plugin.exe;\
-		cd dist && tar -zcvf $(PACKAGENAME)-linux-amd64.tar.gz $(PLUGINNAME)/*;\
-		cd ..;\
-		# build windows artifact\
-		cp dist/intermediate/plugin_windows_amd64.exe dist/$(PLUGINNAME)/server/plugin.exe;\
-		cd dist && tar -zcvf $(PACKAGENAME)-windows-amd64.tar.gz $(PLUGINNAME)/*;\
-		cd ..;\
-		echo Linux plugin built at: dist/$(PACKAGENAME)-linux-amd64.tar.gz;\
-		echo MacOS X plugin built at: dist/$(PACKAGENAME)-darwin-amd64.tar.gz;\
-		echo Windows plugin built at: dist/$(PACKAGENAME)-windows-amd64.tar.gz;\
+		echo Plugin built at: dist/$(PACKAGENAME).tar.gz;\
 	else\
 		echo "Skipping package plugin as nothing changed";\
 	fi
@@ -273,7 +263,7 @@ deploy:
 	echo "Deleting existing plugin..." && \
 	http DELETE $(MM_SERVICESETTINGS_SITEURL)/api/v4/plugins/$(PLUGINNAME) Authorization:"Bearer $$TOKEN" > /dev/null && \
 	echo "Uploading plugin..." && \
-	http --check-status --form POST $(MM_SERVICESETTINGS_SITEURL)/api/v4/plugins plugin@dist/$(PACKAGENAME)-$(PLATFORM)-amd64.tar.gz Authorization:"Bearer $$TOKEN" > /dev/null && \
+	http --check-status --form POST $(MM_SERVICESETTINGS_SITEURL)/api/v4/plugins plugin@dist/$(PACKAGENAME).tar.gz Authorization:"Bearer $$TOKEN" > /dev/null && \
 	echo "Enabling uploaded plugin..." && \
 	http POST $(MM_SERVICESETTINGS_SITEURL)/api/v4/plugins/$(PLUGINNAME)/enable Authorization:"Bearer $$TOKEN" > /dev/null && \
 	echo "Logging out admin user..." && \
