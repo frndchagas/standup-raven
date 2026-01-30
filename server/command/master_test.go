@@ -4,8 +4,9 @@ import (
 	"testing"
 
 	"github.com/mattermost/mattermost/server/public/model"
-	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/standup-raven/standup-raven/server/testutil"
 )
 
 func TearDown() {

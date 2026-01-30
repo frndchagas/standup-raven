@@ -7,9 +7,10 @@ import (
 	"testing"
 
 	"github.com/mattermost/mattermost/server/public/plugin/plugintest"
-	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/standup-raven/standup-raven/server/testutil"
 )
 
 func TearDown() {

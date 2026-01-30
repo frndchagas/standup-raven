@@ -55,7 +55,7 @@ func (ct OTime) GetTimeWithSeconds(timezone string) OTime {
 }
 
 func (ct OTime) GetTimeString() string {
-	return ct.Time.Format(layoutTime)
+	return ct.Format(layoutTime)
 }
 
 // GetDate returns date with format like "20060102"
@@ -66,7 +66,7 @@ func (ct OTime) GetDate(timezone string) OTime {
 }
 
 func (ct OTime) GetDateString() string {
-	return ct.Time.Format(layoutDate)
+	return ct.Format(layoutDate)
 }
 
 func (ct *OTime) UnmarshalJSON(b []byte) (err error) {
@@ -85,7 +85,7 @@ func (ct *OTime) UnmarshalJSON(b []byte) (err error) {
 }
 
 func (ct OTime) MarshalJSON() ([]byte, error) {
-	if ct.Time.UnixNano() == nilTime {
+	if ct.UnixNano() == nilTime {
 		return []byte("null"), nil
 	}
 	return []byte(fmt.Sprintf("\"%s\"", ct.Time.Format(layoutTime))), nil

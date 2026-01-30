@@ -128,7 +128,7 @@ func (sc *Config) IsValid() error {
 		return errors.New("Duplicate members are not allowed. Contains duplicate member '" + duplicateMember + "'")
 	}
 
-	if sc.RRule.Freq == rrule.WEEKLY && (sc.RRule.OrigOptions.Byweekday == nil || len(sc.RRule.OrigOptions.Byweekday) == 0) {
+	if sc.RRule.Freq == rrule.WEEKLY && len(sc.RRule.OrigOptions.Byweekday) == 0 {
 		return errors.New("at least one day must be selected for weekly standup")
 	}
 
