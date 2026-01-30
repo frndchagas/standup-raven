@@ -1,9 +1,11 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import {ControlLabel, FormGroup} from 'react-bootstrap';
-import DatePicker from 'react-16-bootstrap-date-picker';
+import _DatePicker from 'react-16-bootstrap-date-picker';
+const DatePicker = _DatePicker.default || _DatePicker;
 
 import RRuleGenerator from '../reactBootstrapRRuleGenerator';
+import 'react-datetime/css/react-datetime.css';
 import rruleStyles from '../reactBootstrapRRuleGenerator/styles/index.css';
 import configModalStyles from '../configModal/style';
 

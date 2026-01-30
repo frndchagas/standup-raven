@@ -2,117 +2,79 @@ package main
 
 import (
 	"errors"
-	"io/ioutil"
+	"os"
+	"path/filepath"
 	"testing"
 
-	"bou.ke/monkey"
-	"github.com/mattermost/mattermost-server/v5/model"
-	"github.com/mattermost/mattermost-server/v5/plugin/plugintest"
+	"github.com/mattermost/mattermost/server/public/plugin/plugintest"
+	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/standup-raven/standup-raven/server/config"
+	"github.com/stretchr/testify/mock"
 )
 
 func TearDown() {
-	monkey.UnpatchAll()
+	testutil.UnpatchAll()
+}
+
+func setupMockAPI() *plugintest.API {
+	api := &plugintest.API{}
+	api.On("LogDebug", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
+	api.On("LogInfo", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
+	api.On("LogWarn", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
+	api.On("LogError", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
+	api.On("KVSetWithOptions", mock.Anything, mock.Anything, mock.Anything).Return(true, nil)
+	api.On("GetServerVersion").Return("9.0.0")
+	return api
+}
+
+func setupTestBundlePath(t *testing.T) string {
+	t.Helper()
+	dir := t.TempDir()
+	imgDir := filepath.Join(dir, "webapp", "static")
+	err := os.MkdirAll(imgDir, 0750)
+	assert.NoError(t, err)
+	err = os.WriteFile(filepath.Join(imgDir, "logo.png"), []byte("fake-png"), 0600)
+	assert.NoError(t, err)
+	return dir
 }
 
 func TestSetUpBot(t *testing.T) {
 	defer TearDown()
-	bot := &model.Bot{
-		Username:    config.BotUsername,
-		DisplayName: config.BotDisplayName,
-		Description: "Bot for Standup Raven.",
-	}
+	bundlePath := setupTestBundlePath(t)
+	api := setupMockAPI()
+	api.On("EnsureBotUser", mock.Anything).Return("botUserID", nil)
+	api.On("GetBundlePath").Return(bundlePath, nil)
+	api.On("SetProfileImage", mock.Anything, mock.Anything).Return(nil)
+
 	p := &Plugin{}
-	helpers := &plugintest.Helpers{}
-	helpers.On("EnsureBot", bot).Return("botID", nil)
-	api := &plugintest.API{}
-	api.On("GetBundlePath").Return("tmp/", nil)
-	monkey.Patch(ioutil.ReadFile, func(filename string) ([]byte, error) {
-		return []byte{}, nil
-	})
-	api.On("SetProfileImage", "botID", []byte{}).Return(nil)
 	p.SetAPI(api)
-	p.SetHelpers(helpers)
-	_, err := p.setUpBot()
-	assert.Nil(t, err, "no error should have been produced")
+	botID, err := p.setUpBot()
+	assert.Nil(t, err)
+	assert.Equal(t, "botUserID", botID)
+}
+
+func TestSetUpBot_CreateBot(t *testing.T) {
+	defer TearDown()
+	bundlePath := setupTestBundlePath(t)
+	api := setupMockAPI()
+	api.On("EnsureBotUser", mock.Anything).Return("newBotID", nil)
+	api.On("GetBundlePath").Return(bundlePath, nil)
+	api.On("SetProfileImage", mock.Anything, mock.Anything).Return(nil)
+
+	p := &Plugin{}
+	p.SetAPI(api)
+	botID, err := p.setUpBot()
+	assert.Nil(t, err)
+	assert.Equal(t, "newBotID", botID)
 }
 
 func TestSetUpBot_EnsureBot_Error(t *testing.T) {
 	defer TearDown()
-	bot := &model.Bot{
-		Username:    config.BotUsername,
-		DisplayName: config.BotDisplayName,
-		Description: "Bot for Standup Raven.",
-	}
-	p := &Plugin{}
-	helpers := &plugintest.Helpers{}
-	helpers.On("EnsureBot", bot).Return("", errors.New(""))
-	p.SetAPI(&plugintest.API{})
-	p.SetHelpers(helpers)
+	api := setupMockAPI()
+	api.On("EnsureBotUser", mock.Anything).Return("", errors.New("create failed"))
 
-	_, err := p.setUpBot()
-	assert.NotNil(t, err)
-}
-
-func TestSetUpBot_GetBundlePath_Error(t *testing.T) {
-	defer TearDown()
-	bot := &model.Bot{
-		Username:    config.BotUsername,
-		DisplayName: config.BotDisplayName,
-		Description: "Bot for Standup Raven.",
-	}
 	p := &Plugin{}
-	helpers := &plugintest.Helpers{}
-	helpers.On("EnsureBot", bot).Return("botID", nil)
-	api := &plugintest.API{}
-	api.On("GetBundlePath").Return("", errors.New(""))
 	p.SetAPI(api)
-	p.SetHelpers(helpers)
-	_, err := p.setUpBot()
-	assert.NotNil(t, err)
-}
-
-func TestSetUpBot_Readfile_Error(t *testing.T) {
-	defer TearDown()
-	bot := &model.Bot{
-		Username:    config.BotUsername,
-		DisplayName: config.BotDisplayName,
-		Description: "Bot for Standup Raven.",
-	}
-	p := &Plugin{}
-	helpers := &plugintest.Helpers{}
-	helpers.On("EnsureBot", bot).Return("botID", nil)
-	api := &plugintest.API{}
-	api.On("GetBundlePath").Return("tmp/", nil)
-	p.SetAPI(api)
-	p.SetHelpers(helpers)
-	monkey.Patch(ioutil.ReadFile, func(filename string) ([]byte, error) {
-		return nil, errors.New("")
-	})
-	_, err := p.setUpBot()
-	assert.NotNil(t, err)
-}
-
-func TestSetUpBot_SetProfileImage_Error(t *testing.T) {
-	defer TearDown()
-	bot := &model.Bot{
-		Username:    config.BotUsername,
-		DisplayName: config.BotDisplayName,
-		Description: "Bot for Standup Raven.",
-	}
-	p := &Plugin{}
-	helpers := &plugintest.Helpers{}
-	helpers.On("EnsureBot", bot).Return("botID", nil)
-	api := &plugintest.API{}
-	api.On("GetBundlePath").Return("tmp/", nil)
-	monkey.Patch(ioutil.ReadFile, func(filename string) ([]byte, error) {
-		return []byte{}, nil
-	})
-	api.On("SetProfileImage", "botID", []byte{}).Return(&model.AppError{})
-	p.SetAPI(api)
-	p.SetHelpers(helpers)
 	_, err := p.setUpBot()
 	assert.NotNil(t, err)
 }

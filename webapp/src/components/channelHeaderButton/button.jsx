@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import logo from '../../assets/images/logo.svg';
 import RavenClient from '../../raven-client';
 
+const MAX_APP_BAR_ANCESTOR_DEPTH = 5;
+
 class ChannelHeaderButtonIcon extends React.Component {
     constructor(props) {
         super(props);
@@ -61,15 +63,40 @@ class ChannelHeaderButtonIcon extends React.Component {
     }
 
     isChannelHeaderButtonInDropdown = () => {
-        const classList = this.state.parent.parentNode.parentNode.parentNode.parentNode.classList;
-        return classList.contains('dropdown') && classList.contains('btn-group');
+        try {
+            const ancestor = this.state.parent.parentNode.parentNode.parentNode.parentNode;
+            if (!ancestor || !ancestor.classList) {
+                return false;
+            }
+            return ancestor.classList.contains('dropdown') && ancestor.classList.contains('btn-group');
+        } catch (e) {
+            return false;
+        }
     }
 
     getIconParentToHide = () => {
+        // In Mattermost v9+ the button may be rendered inside the app bar
+        // with a different DOM structure than the old channel header dropdown.
+        const appBarParent = this.findAppBarParent();
+        if (appBarParent) {
+            return appBarParent;
+        }
+
         if (this.isChannelHeaderButtonInDropdown()) {
             return this.state.parent.parentNode.parentNode;
         }
         return this.state.parent;
+    }
+
+    findAppBarParent = () => {
+        let node = this.state.parent;
+        for (let i = 0; i < MAX_APP_BAR_ANCESTOR_DEPTH && node; i++) {
+            if (node.id && node.id.startsWith('app-bar-icon-')) {
+                return node.querySelector('.app-bar__icon-inner') || node;
+            }
+            node = node.parentNode;
+        }
+        return null;
     }
 
     render() {

@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mattermost/mattermost-server/v5/model"
+	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/pkg/errors"
 
 	"github.com/standup-raven/standup-raven/server/otime"
@@ -70,8 +70,8 @@ func Max(a, b int) int {
 
 func SendEphemeralText(msg string) (*model.CommandResponse, *model.AppError) {
 	return &model.CommandResponse{
-		Type: model.COMMAND_RESPONSE_TYPE_EPHEMERAL,
-		Text: msg,
+		ResponseType: model.CommandResponseTypeEphemeral,
+		Text:         msg,
 	}, nil
 }
 

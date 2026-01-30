@@ -2,81 +2,118 @@
 
 #
 
-## 🚦 Getting Started
+## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
+Instructions to run the project locally for development and testing.
 
-See [deployment notes](deployment.md) on how to deploy the project on a live system.
+See [deployment notes](deployment.md) for deploying to production.
 
-### 🔑 Prerequisites
+### Prerequisites
 
-Set up your development environment for building, running, and testing the Standup Raven.
-
-#### 👨‍💻 Obtaining Source
+#### Source
 
     $ git clone git@github.com:standup-raven/standup-raven.git
 
-#### Go
-
-Requires go version 1.18
+#### Go 1.22+
 
     https://golang.org/doc/install
-    
-#### NodeJS
 
-Recommended NodeJS version 14.8.0
+#### Bun
 
-    https://nodejs.org/download/release/v14.8.0/
+    https://bun.sh
 
 #### Make
 
-On Ubuntu -
+On macOS, install XCode command line tools:
+
+    $ xcode-select --install
+
+On Ubuntu:
 
     $ sudo apt-get install build-essential
-    
-On MacOS, install XCode command line tools. 
 
-#### HTTPie
+#### mmctl
 
-You need this only if you want to use `$ make deploy` for deployments to Mattermost instances.
+Only needed for `make deploy`. Already included with the Mattermost server or can be installed separately:
 
-On MacOS
+    https://docs.mattermost.com/manage/mmctl-command-line-tool.html
 
-    $ brew install httpie
-    
-On Ubuntu
+### Mattermost Server (dev)
 
-    $ apt-get install httpie
-    
-For other platforms, refer to the [official installation guide](https://github.com/jakubroztocil/httpie#id3).
+The plugin requires a running Mattermost instance. The server repository is at `../mattermost/server/`.
 
-### 👨‍💻 Building
+#### Start infrastructure + server
 
-Once you have fetched the repo, simply run `$ make dist` from the repo.
+```bash
+cd ../mattermost/server
+make run-server          # starts Docker (postgres, redis, minio...) + server on port 8065
+```
 
-This will produce three artifacts in `/dist` directory -
+#### Other useful commands
 
-| Flavor  | Distribution |
-|-------- | ------------ |
-| Linux   | `mattermost-plugin-standup-raven-vx.y.z-linux-amd64.tar.gz`  |
-| MacOS   | `mattermost-plugin-standup-raven-vx.y.z-darwin-amd64.tar.gz` |
-| Windows | `mattermost-plugin-standup-raven-vx.y.z-windows-amd64.tar.gz`|
+```bash
+make run                 # server + webapp
+make stop-server         # stop the server
+make restart-server      # restart with hot reload
+make test-data           # start with sample data (sysadmin / Sys@dmin-sample1)
+```
 
-This will also install, Glide - the Go package manager.
+#### Access
 
-## 💯 Running Tests
+    http://localhost:8065
 
-Following command will run all server and webapp tests -
+#### Docker Services
 
-    $ make test
-    
-## 👞 Running Style Check
+| Service    | Port |
+|------------|------|
+| PostgreSQL | 5433 |
+| Redis      | 6379 |
+| MinIO      | 9000 |
+| Grafana    | 3001 |
+| Prometheus | 9090 |
+| Inbucket   | 9001 |
 
-This will run server and webapp style checks -
+### Building
 
-    $ make check-style
-    
-You can also run style checks for the server and webapp individually.
+```bash
+make dist
+```
 
-    $ make check-style-server # server style check
-    $ make check-style-webapp # webapp style check
+Generates `.tar.gz` packages in `dist/` for 5 platforms:
+
+| Platform      | File |
+|---------------|------|
+| Linux amd64   | `mattermost-plugin-standup-raven-vX.Y.Z-linux-amd64.tar.gz` |
+| Linux arm64   | `mattermost-plugin-standup-raven-vX.Y.Z-linux-arm64.tar.gz` |
+| macOS amd64   | `mattermost-plugin-standup-raven-vX.Y.Z-darwin-amd64.tar.gz` |
+| macOS arm64   | `mattermost-plugin-standup-raven-vX.Y.Z-darwin-arm64.tar.gz` |
+| Windows amd64 | `mattermost-plugin-standup-raven-vX.Y.Z-windows-amd64.tar.gz` |
+
+### Local Deploy
+
+```bash
+make deploy    # installs via mmctl on local Mattermost
+```
+
+### Running Tests
+
+```bash
+make test
+```
+
+### Style Check
+
+```bash
+make check-style           # server + webapp
+make check-style-server    # Go only (golangci-lint)
+make check-style-webapp    # JS only (eslint + stylelint)
+```
+
+### Tech Stack
+
+| Component | Technology |
+|-----------|------------|
+| Server    | Go 1.22, Mattermost Plugin API v8+ |
+| Webapp    | React 17, Bun (bundler + package manager) |
+| CI/CD     | GitHub Actions |
+| Deploy    | mmctl |

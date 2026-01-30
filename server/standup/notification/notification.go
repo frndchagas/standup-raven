@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mattermost/mattermost-server/v5/model"
+	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/pkg/errors"
 
 	"github.com/standup-raven/standup-raven/server/config"
@@ -80,8 +80,11 @@ func sendAllStandupReport(channelIDs []string) error {
 	return nil
 }
 
-// GetNotificationStatus gets the notification status for specified channel
-func GetNotificationStatus(channelID string) (*ChannelNotificationStatus, error) {
+// GetNotificationStatus gets the notification status for specified channel.
+// Defined as a variable to allow test-time replacement without monkey patching.
+var GetNotificationStatus = getNotificationStatus
+
+func getNotificationStatus(channelID string) (*ChannelNotificationStatus, error) {
 	logger.Debug(fmt.Sprintf("Fetching notification status for channel: %s", channelID), nil)
 	standupConfig, err := standup.GetStandupConfig(channelID)
 	if err != nil {
@@ -109,8 +112,11 @@ func GetNotificationStatus(channelID string) (*ChannelNotificationStatus, error)
 	return status, nil
 }
 
-// SendStandupReport sends standup report for all channel IDs specified
-func SendStandupReport(channelIDs []string, date otime.OTime, visibility string, userID string, updateStatus bool) error {
+// SendStandupReport sends standup report for all channel IDs specified.
+// Defined as a variable to allow test-time replacement without monkey patching.
+var SendStandupReport = sendStandupReport
+
+func sendStandupReport(channelIDs []string, date otime.OTime, visibility string, userID string, updateStatus bool) error {
 	for _, channelID := range channelIDs {
 		logger.Info("Sending standup report for channel: "+channelID+" time: "+date.GetDateString(), nil)
 
@@ -259,7 +265,10 @@ func sortUserStandups(userStandups []*standup.UserStandup) ([]*standup.UserStand
 }
 
 // SetNotificationStatus sets provided notification status for the specified channel ID.
-func SetNotificationStatus(channelID string, status *ChannelNotificationStatus) error {
+// Defined as a variable to allow test-time replacement without monkey patching.
+var SetNotificationStatus = setNotificationStatus
+
+func setNotificationStatus(channelID string, status *ChannelNotificationStatus) error {
 	standupConfig, err := standup.GetStandupConfig(channelID)
 	if err != nil {
 		return err
@@ -286,9 +295,11 @@ func SetNotificationStatus(channelID string, status *ChannelNotificationStatus) 
 // 1. channels requiring window open notification
 // 2. channels requiring window close notification
 // 3. channels requiring standup report
-func filterChannelNotification(channelIDs map[string]string) ([]string, []string, []string, error) {
+var filterChannelNotification = filterChannelNotificationImpl
+
+func filterChannelNotificationImpl(channelIDs map[string]string) ([]string, []string, []string, error) {
 	logger.Debug("Filtering channels for sending notifications", nil)
-	logger.Debug(fmt.Sprintf("Channels to process: %d", len(channelIDs)), nil, nil)
+	logger.Debug(fmt.Sprintf("Channels to process: %d", len(channelIDs)), nil)
 
 	var windowOpenNotificationChannels, windowCloseNotificationChannels, standupReportChannels []string
 
@@ -407,7 +418,7 @@ func sendWindowOpenNotification(channelIDs []string) {
 		post := &model.Post{
 			ChannelId: channelID,
 			UserId:    config.GetConfig().BotUserID,
-			Type:      model.POST_DEFAULT,
+			Type:      model.PostTypeDefault,
 			Message:   "Please start filling your standup!",
 		}
 
@@ -480,7 +491,7 @@ func sendWindowCloseNotification(channelIDs []string) error {
 		post := &model.Post{
 			ChannelId: channelID,
 			UserId:    config.GetConfig().BotUserID,
-			Type:      model.POST_DEFAULT,
+			Type:      model.PostTypeDefault,
 			Message:   message,
 		}
 
@@ -631,7 +642,7 @@ func getUserDisplayName(userID string) (string, error) {
 	if appErr != nil {
 		return "", errors.New(appErr.Error())
 	}
-	return user.GetDisplayName(model.SHOW_FULLNAME), nil
+	return user.GetDisplayName(model.ShowFullName), nil
 }
 
 func addReminderPost(postID string, channelID string) error {

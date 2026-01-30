@@ -1,5 +1,6 @@
 import React from 'react';
-import Switch from 'react-switch';
+import _Switch from 'react-switch';
+const Switch = _Switch.default || _Switch;
 import SentryBoundary from '../../SentryBoundary';
 import color from 'color';
 import './style.css';

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"bou.ke/monkey"
+	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +12,7 @@ func TestUpgradeDatabaseToVersion2_0_0(t *testing.T) {
 	defer TearDown()
 
 	updateSchemaVersionCount := 0
-	monkey.Patch(updateSchemaVersion, func(version string) error {
+	testutil.Patch(updateSchemaVersion, func(version string) error {
 		updateSchemaVersionCount++
 		return nil
 	})
@@ -26,7 +26,7 @@ func TestUpgradeDatabaseToVersion2_0_0_updateSchemaVersion_error(t *testing.T) {
 	defer TearDown()
 
 	updateSchemaVersionCount := 0
-	monkey.Patch(updateSchemaVersion, func(version string) error {
+	testutil.Patch(updateSchemaVersion, func(version string) error {
 		updateSchemaVersionCount++
 		return errors.New("")
 	})

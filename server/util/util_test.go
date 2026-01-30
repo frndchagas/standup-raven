@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"bou.ke/monkey"
-	"github.com/mattermost/mattermost-server/v5/model"
+	"github.com/mattermost/mattermost/server/public/model"
+	"github.com/standup-raven/standup-raven/server/testutil"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/standup-raven/standup-raven/server/otime"
@@ -60,7 +60,7 @@ func TestSendEphemeralText(t *testing.T) {
 	response, err := SendEphemeralText("my message")
 
 	assert.Nil(t, err)
-	assert.Equal(t, model.COMMAND_RESPONSE_TYPE_EPHEMERAL, response.Type)
+	assert.Equal(t, model.CommandResponseTypeEphemeral, response.ResponseType)
 	assert.Equal(t, "my message", response.Text)
 }
 
@@ -71,13 +71,13 @@ func TestDifference(t *testing.T) {
 }
 
 func TestGetCurrentDateString(t *testing.T) {
-	monkey.Patch(otime.Now, func(timezone string) otime.OTime {
+	testutil.Patch(otime.Now, func(timezone string) otime.OTime {
 		t, _ := time.Parse("02-Jan-06", "02-Jan-06")
 		return otime.OTime{
 			Time: t,
 		}
 	})
-	defer monkey.Unpatch(otime.Now)
+	defer testutil.Unpatch(otime.Now)
 
 	assert.Equal(t, "20060102", GetCurrentDateString("Asia/Kolkata"))
 }

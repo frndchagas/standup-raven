@@ -2,25 +2,22 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
-
-	"github.com/getsentry/sentry-go"
-	"github.com/mattermost/mattermost-plugin-api/cluster"
-
-	"github.com/standup-raven/standup-raven/server/logger"
-	"github.com/standup-raven/standup-raven/server/migration"
-	"github.com/standup-raven/standup-raven/server/standup/notification"
-
 	"os"
 	"path/filepath"
 
-	"github.com/mattermost/mattermost-server/v5/model"
-	"github.com/mattermost/mattermost-server/v5/plugin"
+	"github.com/getsentry/sentry-go"
+	"github.com/mattermost/mattermost/server/public/model"
+	"github.com/mattermost/mattermost/server/public/plugin"
+	"github.com/mattermost/mattermost/server/public/pluginapi"
+	"github.com/mattermost/mattermost/server/public/pluginapi/cluster"
 
 	"github.com/standup-raven/standup-raven/server/command"
 	"github.com/standup-raven/standup-raven/server/config"
 	"github.com/standup-raven/standup-raven/server/controller"
+	"github.com/standup-raven/standup-raven/server/logger"
+	"github.com/standup-raven/standup-raven/server/migration"
+	"github.com/standup-raven/standup-raven/server/standup/notification"
 	"github.com/standup-raven/standup-raven/server/util"
 )
 
@@ -64,28 +61,15 @@ func (p *Plugin) OnActivate() error {
 }
 
 func (p *Plugin) setUpBot() (string, error) {
-	botID, err := p.Helpers.EnsureBot(&model.Bot{
+	client := pluginapi.NewClient(p.API, p.Driver)
+
+	botID, err := client.Bot.EnsureBot(&model.Bot{
 		Username:    config.BotUsername,
 		DisplayName: config.BotDisplayName,
 		Description: "Bot for Standup Raven.",
-	})
+	}, pluginapi.ProfileImagePath("webapp/static/logo.png"))
 	if err != nil {
 		return "", err
-	}
-
-	bundlePath, err := p.API.GetBundlePath()
-	if err != nil {
-		return "", err
-	}
-
-	profileImage, err := ioutil.ReadFile(filepath.Join(bundlePath, "webapp/static/logo.png"))
-	if err != nil {
-		return "", err
-	}
-
-	appErr := p.API.SetProfileImage(botID, profileImage)
-	if appErr != nil {
-		return "", appErr
 	}
 
 	return botID, nil
@@ -132,8 +116,12 @@ func (p *Plugin) OnConfigurationChange() error {
 }
 
 func (p *Plugin) setInjectedVars(configuration *config.Configuration) {
-	// substring to remove "v" from "vX.Y.Z"
-	configuration.PluginVersion = PluginVersion[1:]
+	if len(PluginVersion) > 1 {
+		// substring to remove "v" from "vX.Y.Z"
+		configuration.PluginVersion = PluginVersion[1:]
+	} else {
+		configuration.PluginVersion = "dev"
+	}
 	configuration.SentryWebappDSN = SentryWebappDSN
 	configuration.SentryServerDSN = SentryServerDSN
 }
@@ -159,8 +147,8 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 	split, argErr := util.SplitArgs(args.Command)
 	if argErr != nil {
 		return &model.CommandResponse{
-			Type: model.COMMAND_RESPONSE_TYPE_EPHEMERAL,
-			Text: argErr.Error(),
+			ResponseType: model.CommandResponseTypeEphemeral,
+			Text:         argErr.Error(),
 		}, nil
 	}
 
