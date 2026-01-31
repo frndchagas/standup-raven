@@ -1,6 +1,6 @@
 module github.com/standup-raven/standup-raven
 
-go 1.24.11
+go 1.25.6
 
 require (
 	github.com/agiledragon/gomonkey/v2 v2.14.0
