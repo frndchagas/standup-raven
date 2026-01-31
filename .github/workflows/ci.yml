@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - uses: oven-sh/setup-bun@v2
 
@@ -29,7 +29,7 @@ jobs:
       - name: Install golangci-lint
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.1.6
+          version: v2.8.0
           args: ./server/...
           only-new-issues: true
 
@@ -50,7 +50,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - name: Run server tests
         run: go test -gcflags='all=-l' -v -coverprofile=coverage.txt ./...
@@ -71,7 +71,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - uses: oven-sh/setup-bun@v2
 
@@ -86,10 +86,25 @@ jobs:
         run: cd webapp && bun install --frozen-lockfile
 
       - name: Build plugin
-        run: make -j$(nproc) dist CI=true
+        run: make dist CI=true
 
-      - name: Upload artifacts
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum *.tar.gz > checksums.txt
+          cat checksums.txt
+
+      - name: Upload plugin artifact
         uses: actions/upload-artifact@v4
         with:
-          name: plugin-dist
+          name: plugin-${{ github.sha }}
           path: dist/*.tar.gz
+          retention-days: 30
+          compression-level: 0
+
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums-${{ github.sha }}
+          path: dist/checksums.txt
+          retention-days: 30

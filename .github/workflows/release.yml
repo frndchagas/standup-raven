@@ -17,19 +17,34 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.25'
 
       - uses: oven-sh/setup-bun@v2
+
+      - name: Cache bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('webapp/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
 
       - name: Install webapp dependencies
         run: cd webapp && bun install --frozen-lockfile
 
       - name: Build plugin
-        run: make dist
+        run: make dist CI=true
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum *.tar.gz > checksums.txt
+          cat checksums.txt
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ github.ref_name }}
           generate_release_notes: true
-          files: dist/*.tar.gz
+          files: |
+            dist/*.tar.gz
+            dist/checksums.txt
