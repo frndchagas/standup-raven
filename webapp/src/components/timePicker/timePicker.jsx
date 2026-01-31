@@ -106,7 +106,8 @@ class TimePicker extends React.PureComponent {
         }
 
         const minutesMenuItems = [];
-        for (let i = 0; i <= TimePicker.MINUTES_MAX_VALUE; ++i) {
+        // eslint-disable-next-line no-magic-numbers
+        for (let i = 0; i <= TimePicker.MINUTES_MAX_VALUE; i += 5) {
             // eslint-disable-next-line no-magic-numbers
             const x = i < 10 ? '0' + i : String(i);
             minutesMenuItems.push(
@@ -122,7 +123,7 @@ class TimePicker extends React.PureComponent {
         return (
             <div
                 className={'time-picker'}
-                style={{display: 'inline-block'}}
+                style={{display: 'inline-flex', alignItems: 'center'}}
             >
                 <SplitButton
                     id={`${this.props.id}-hours`}
@@ -164,8 +165,9 @@ class TimePicker extends React.PureComponent {
 function getStyle() {
     return {
         timeSeparator: {
-            paddingLeft: '5px',
-            paddingRight: '5px',
+            padding: '0 8px',
+            fontWeight: 600,
+            fontSize: '14px',
         },
     };
 }

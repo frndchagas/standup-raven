@@ -1,3 +1,19 @@
 .app__body .modal .dropdown .btn {
   border: 1px solid;
 }
+
+.time-picker .btn {
+  min-height: 40px;
+}
+
+.time-picker .dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.time-picker .dropdown-menu > li > a {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}

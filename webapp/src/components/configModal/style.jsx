@@ -3,17 +3,31 @@ function getStyle() {
         controlLabel: {
             paddingRight: '10px',
             width: '180px',
+            flexShrink: 0,
         },
         controlLabelX: {
             paddingRight: '10px',
             paddingLeft: '10px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            minHeight: '40px',
         },
         formField: {
-            width: 'calc(100% - 180px)', // 180px is the width of control label
+            flex: 1,
+            minWidth: 0,
+        },
+        windowTimeRow: {
+            display: 'inline-flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '4px',
         },
         formGroup: {
-            marginBottom: '20px',
-            minHeight: '35px',
+            marginBottom: '16px',
+            minHeight: '40px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
         },
         formGroupNoMarginBottom: {
             marginBottom: '0',

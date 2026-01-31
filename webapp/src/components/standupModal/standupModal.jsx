@@ -264,6 +264,7 @@ class StandupModal extends React.Component {
                 show={this.props.visible}
                 onHide={this.handleClose}
                 backdrop={'static'}
+                className={'standup-raven'}
             >
 
                 <Modal.Header closeButton={true}>
@@ -296,20 +297,22 @@ class StandupModal extends React.Component {
                                     {sections}
                                 </div>
                             </form>
-                            <Button
-                                bsStyle='primary'
-                                className={'fa fa-chevron-left'}
-                                onClick={() => this.switchTabs('backward')}
-                                disabled={this.state.activeTab === firstTab}
-                                style={style.controlBtns}
-                            />
-                            <Button
-                                bsStyle='primary'
-                                className={'fa fa-chevron-right'}
-                                onClick={() => this.switchTabs('forward')}
-                                disabled={this.state.activeTab === lastTab}
-                                style={style.controlBtns}
-                            />
+                            <div style={style.controlBar}>
+                                <Button
+                                    bsStyle='primary'
+                                    className={'fa fa-chevron-left'}
+                                    onClick={() => this.switchTabs('backward')}
+                                    disabled={this.state.activeTab === firstTab}
+                                    style={style.controlBtns}
+                                />
+                                <Button
+                                    bsStyle='primary'
+                                    className={'fa fa-chevron-right'}
+                                    onClick={() => this.switchTabs('forward')}
+                                    disabled={this.state.activeTab === lastTab}
+                                    style={style.controlBtns}
+                                />
+                            </div>
                         </span>
                     </span>
                 </Modal.Body>

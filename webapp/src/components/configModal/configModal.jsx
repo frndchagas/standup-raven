@@ -12,6 +12,7 @@ import {
     Tab,
     Tabs,
 } from 'react-bootstrap';
+import {Typeahead} from 'react-bootstrap-typeahead';
 import PropTypes from 'prop-types';
 import Cookies from 'js-cookie';
 import * as HttpStatus from 'http-status-codes';
@@ -365,16 +366,8 @@ class ConfigModal extends React.Component {
     render() {
         // eslint-disable-next-line no-shadow
         const style = reactStyles.getStyle();
-        const data = timezones.map((timezone) =>
-            (
-                <MenuItem
-                    key={timezone.value}
-                    eventKey={timezone.value}
-                >
-                    {timezone.display_name}
-                </MenuItem>
-            ),
-        );
+        const timezoneOptions = timezones.map((tz) => ({label: tz.display_name, value: tz.value}));
+        const selectedTimezoneOption = timezoneOptions.filter((tz) => tz.value === this.state.timezone);
         let standupErrorMessage = '';
         let standupErrorSubMessage = '';
 
@@ -407,6 +400,7 @@ class ConfigModal extends React.Component {
                 show={this.props.visible}
                 onHide={this.handleClose}
                 backdrop={'static'}
+                className={'standup-raven'}
             >
                 <Modal.Header closeButton={true}>
                     <Modal.Title>
@@ -541,19 +535,21 @@ class ConfigModal extends React.Component {
                                     <ControlLabel style={style.controlLabel}>
                                         {'Window Time:'}
                                     </ControlLabel>
-                                    <TimePicker
-                                        id={'window-start-time'}
-                                        time={this.state.windowOpenTime}
-                                        onChange={this.handleWindowOpenTimeChange}
-                                        bsStyle={'link'}
-                                    />
-                                    <span style={style.controlLabelX}>{'to'}</span>
-                                    <TimePicker
-                                        id={'window-end-time'}
-                                        time={this.state.windowCloseTime}
-                                        onChange={this.handleWindowCloseTimeChange}
-                                        bsStyle={'link'}
-                                    />
+                                    <div style={style.windowTimeRow}>
+                                        <TimePicker
+                                            id={'window-start-time'}
+                                            time={this.state.windowOpenTime}
+                                            onChange={this.handleWindowOpenTimeChange}
+                                            bsStyle={'link'}
+                                        />
+                                        <span style={style.controlLabelX}>{'to'}</span>
+                                        <TimePicker
+                                            id={'window-end-time'}
+                                            time={this.state.windowCloseTime}
+                                            onChange={this.handleWindowCloseTimeChange}
+                                            bsStyle={'link'}
+                                        />
+                                    </div>
                                 </FormGroup>
                                 <FormGroup
                                     style={style.formGroup}
@@ -562,13 +558,20 @@ class ConfigModal extends React.Component {
                                     <ControlLabel style={style.controlLabel}>
                                         {'Timezone:'}
                                     </ControlLabel>
-                                    <SplitButton
-                                        title={ConfigModal.TIMEZONE_DISPLAY_NAMES[this.state.timezone]}
-                                        onSelect={this.handleTimezoneChange}
-                                        bsStyle={'link'}
-                                        style={{width: '300px'}}
-                                    >{data}
-                                    </SplitButton>
+                                    <Typeahead
+                                        id={'timezone-selector'}
+                                        options={timezoneOptions}
+                                        selected={selectedTimezoneOption}
+                                        onChange={(selected) => {
+                                            if (selected.length > 0) {
+                                                this.handleTimezoneChange(selected[0].value);
+                                            }
+                                        }}
+                                        placeholder={'Search timezone...'}
+                                        clearButton={true}
+                                        highlightOnlyResult={true}
+                                        disabled={!this.state.hasPermission}
+                                    />
                                 </FormGroup>
                                 <FormGroup disabled={!this.state.hasPermission}>
                                     <RRule

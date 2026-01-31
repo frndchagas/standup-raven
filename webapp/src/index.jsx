@@ -6,6 +6,9 @@ import StandupModal from './components/standupModal';
 import ConfigModal from './components/configModal';
 import Constants from './constants';
 
+import './styles/overrides.css';
+import './styles/typeahead.css';
+
 class StandupRavenPlugin {
     // eslint-disable-next-line class-methods-use-this
     initialize(registry, store) {

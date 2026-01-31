@@ -1,3 +1,8 @@
+/* ==========================================================================
+   RRule Component - Scoped under .standup-raven
+   Uses Mattermost CSS tokens.
+   ========================================================================== */
+
 .react-datepicker__day-name,
 .react-datepicker__day,
 .react-datepicker__time-name {
@@ -10,97 +15,133 @@
   font-weight: bold;
 }
 
-.standup-recurrence .col-sm-2.text-sm-right,
-.standup-recurrence .col-sm-1.offset-sm-2 {
+/* --- Standup Recurrence Layout --- */
+
+.standup-raven .standup-recurrence .col-sm-2.text-sm-right,
+.standup-raven .standup-recurrence .col-sm-1.offset-sm-2 {
   width: 180px;
   padding: 0;
+  flex-shrink: 0;
 }
 
-.standup-recurrence .px-0.pt-3.border.rounded {
+.standup-raven .standup-recurrence .px-0.pt-3.border.rounded {
   padding-top: 0 !important;
 }
 
-.standup-recurrence .form-group.row {
-  margin-bottom: 20px;
+.standup-raven .standup-recurrence .form-group.row {
+  margin-bottom: 16px;
 }
 
-.individual-day-of-week-selector .btn.btn-primary {
+/* --- Day-of-Week Selector --- */
+
+.standup-raven .individual-day-of-week-selector .btn.btn-primary {
   background: none !important;
   border: none;
   flex: 1;
 }
 
-.individual-day-of-week-selector .btn.btn-primary input {
+.standup-raven .individual-day-of-week-selector .btn.btn-primary input {
   box-shadow: none;
   cursor: pointer;
   margin-bottom: 10px;
 }
 
-label.btn.btn-primary.day {
-  border: 1px solid var(--link-color);
-  color: var(--link-color);
+.standup-raven label.btn.btn-primary.day {
+  min-width: 40px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--button-bg) !important;
+  border-radius: var(--radius-s, 4px);
+  color: var(--button-bg) !important;
+  background: transparent !important;
 }
 
-label.btn.btn-primary.day.active {
+.standup-raven label.btn.btn-primary.day.active {
   box-shadow: none;
-  background-color: var(--sidebar-text-active-border) !important;
-  color: var(--center-channel-color);
+  background-color: var(--button-bg) !important;
+  color: var(--button-color) !important;
 }
 
-.individual-day-of-week-selector .btn-group {
+.standup-raven .individual-day-of-week-selector .btn-group {
   display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
-.individual-day-of-week-selector {
-  width: 70%;
-  margin-left: auto;
-  margin-right: auto;
+.standup-raven .individual-day-of-week-selector {
+  width: 100%;
+  max-width: 400px;
 }
 
-.individual-day-of-week-selector .btn.btn-primary:hover {
-  background: var(--sidebar-bg) !important;
-  color: var(--sidebar-text) !important;
+.standup-raven .individual-day-of-week-selector .btn.btn-primary:hover {
+  background: rgba(var(--button-bg-rgb), 0.08) !important;
+  color: var(--button-bg) !important;
 }
 
-.standup-recurrence select {
+.standup-raven .standup-recurrence select {
   cursor: pointer;
+  min-height: 40px;
 }
 
-.standup-recurrence input[type="checkbox"] {
+.standup-raven .standup-recurrence input[type="checkbox"] {
   position: absolute;
   left: -100vw;
 }
 
-#standup-config-tabs .control-label {
+/* --- Config Tabs Overrides --- */
+
+.standup-raven #standup-config-tabs .control-label {
   width: 180px;
+  flex-shrink: 0;
 }
 
-#standup-config-tabs .form-group {
-  margin-bottom: 20px;
+.standup-raven #standup-config-tabs .form-group {
+  margin-bottom: 16px;
 }
 
-#standup-config-tabs .combo-label {
+.standup-raven #standup-config-tabs .combo-label {
   width: 180px;
   padding: 0;
 }
 
-#standup-config-tabs .day-of-month-selector {
+.standup-raven #standup-config-tabs .day-of-month-selector {
   padding: 0;
   width: calc(100% - 180px);
 }
 
-.day-of-week-selector {
+.standup-raven .day-of-week-selector {
   margin-left: 35px;
 }
 
-.dropup .btn.btn-link {
+.standup-raven .dropup .btn.btn-link {
   border-color: var(--link-color);
 }
 
-#standup-config-tabs .dropdown-menu {
+.standup-raven #standup-config-tabs .dropdown-menu {
   width: 100%;
   max-width: 100%;
   min-width: unset;
-  max-height: 160px;
+  max-height: 200px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* --- Responsive: Tablet (<=767px) --- */
+
+@media (max-width: 767px) {
+  .standup-raven .standup-recurrence .col-sm-2.text-sm-right,
+  .standup-raven .standup-recurrence .col-sm-1.offset-sm-2 {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .standup-raven .individual-day-of-week-selector {
+    width: 100%;
+  }
+
+  .standup-raven #standup-config-tabs .day-of-month-selector {
+    width: 100%;
+  }
 }
