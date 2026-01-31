@@ -6,6 +6,7 @@ import (
 	"github.com/mattermost/mattermost/server/public/model"
 
 	"github.com/standup-raven/standup-raven/server/config"
+	"github.com/standup-raven/standup-raven/server/dialog"
 	"github.com/standup-raven/standup-raven/server/util"
 )
 
@@ -74,6 +75,14 @@ func executeCommandMaster(args []string, context Context) (*model.CommandRespons
 		subCommandArgs := context.Props["subCommandArgs"].([]string)
 		response, appErr = subCommand.Execute(subCommandArgs, context)
 	} else {
+		if context.IsMobile {
+			err := dialog.BuildStandupDialog(context.TriggerId, context.CommandArgs.ChannelId, context.CommandArgs.UserId)
+			if err != nil {
+				return util.SendEphemeralText("Could not open standup dialog: " + err.Error())
+			}
+			return &model.CommandResponse{}, nil
+		}
+
 		config.Mattermost.PublishWebSocketEvent(
 			"open_standup_modal",
 			map[string]interface{}{

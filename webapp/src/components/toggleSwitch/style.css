@@ -1,5 +1,7 @@
-
 .toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
   vertical-align: middle;
-  display: inline-block;
+  cursor: pointer;
 }

@@ -18,11 +18,11 @@ class ToggleSwitch extends React.Component {
                     onColor={color(this.props.theme.linkColor).darken(darkenRatio).hex()}
                     boxShadow='0px 1px 5px rgba(0, 0, 0, 0.6)'
                     onHandleColor={this.props.theme.linkColor}
-                    handleDiameter={23}
+                    handleDiameter={24}
                     uncheckedIcon={false}
                     checkedIcon={false}
-                    height={13}
-                    width={35}
+                    height={20}
+                    width={44}
                 />
             </div>
         );

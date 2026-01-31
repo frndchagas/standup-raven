@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Standup Raven - Bootstrap 3 Overrides (scoped under .standup-raven)
+   Uses Mattermost CSS tokens for theme compatibility.
+   ========================================================================== */
+
+/* --- Form Controls --- */
+
+.standup-raven .form-control {
+  height: 40px;
+  font-size: 14px;
+  border-radius: var(--radius-s, 4px);
+  border: var(--border-default);
+  background: var(--center-channel-bg);
+  color: var(--center-channel-color);
+  transition: border-color 150ms, box-shadow 150ms;
+}
+
+.standup-raven .form-control:focus {
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 2px rgb(var(--button-bg-rgb) / 16%);
+}
+
+/* --- Buttons --- */
+
+.standup-raven .btn {
+  min-height: 40px;
+  min-width: 40px;
+  border-radius: var(--radius-s, 4px);
+  font-size: 14px;
+  transition: background 150ms, color 150ms, border-color 150ms;
+}
+
+.standup-raven .btn:active {
+  transform: scale(0.97);
+}
+
+/* --- Focus Visible (non-anchor elements) --- */
+
+.standup-raven .btn:focus-visible,
+.standup-raven .form-control:focus-visible {
+  outline: 2px solid var(--button-bg);
+  outline-offset: -2px;
+}
+
+/* --- Dropdowns --- */
+
+.standup-raven .dropdown-menu {
+  max-height: 240px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-m, 8px);
+  box-shadow: var(--elevation-3);
+  border: var(--border-light);
+}
+
+.standup-raven .dropdown-menu > li > a {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  color: var(--center-channel-color);
+}
+
+.standup-raven .dropdown-menu > .active > a {
+  background: rgb(var(--button-bg-rgb) / 8%);
+  color: var(--button-bg);
+}
+
+.standup-raven .dropdown-menu > li > a:hover {
+  background: rgb(var(--center-channel-color-rgb) / 8%);
+}
+
+.standup-raven .nav-tabs > li > a:focus-visible {
+  outline: 2px solid var(--button-bg);
+  outline-offset: -2px;
+}
+
+.standup-raven .dropdown-menu > .active > a:hover {
+  background: rgb(var(--button-bg-rgb) / 8%);
+  color: var(--button-bg);
+}
+
+/* --- SplitButton text padding --- */
+
+.standup-raven .btn-group > .btn:first-child {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* --- Responsive: Tablet (<=767px) --- */
+
+@media (width <= 767px) {
+  .standup-raven .modal-body {
+    padding: 12px;
+  }
+
+  .standup-raven .modal-footer {
+    padding: 8px 12px;
+  }
+}
+
+/* --- Responsive: Mobile (<=479px) --- */
+
+@media (width <= 479px) {
+  .standup-raven .modal-dialog {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .standup-raven .modal-content {
+    border-radius: 0;
+    height: 100%;
+  }
+}
+
+/* --- Reduced Motion --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .standup-raven * {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}

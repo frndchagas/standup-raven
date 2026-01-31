@@ -1,0 +1,29 @@
+/* ==========================================================================
+   Standup Raven - react-bootstrap-typeahead overrides (scoped)
+   ========================================================================== */
+
+.standup-raven .rbt-input-main {
+  height: 40px;
+  font-size: 14px;
+  border-radius: var(--radius-s, 4px);
+}
+
+.standup-raven .rbt-menu {
+  max-height: 240px;
+  border-radius: var(--radius-m, 8px);
+  box-shadow: var(--elevation-3);
+  border: var(--border-light);
+}
+
+.standup-raven .rbt-menu .dropdown-item,
+.standup-raven .rbt-menu > li > a {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+}
+
+.standup-raven .rbt-highlight-text {
+  color: var(--button-bg);
+  font-weight: 600;
+}

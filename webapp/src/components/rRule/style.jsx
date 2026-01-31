@@ -3,7 +3,8 @@ function getStyle() {
         recurrenceDatepicker: {
             display: 'inline-block',
             verticalAlign: 'middle',
-            width: '58%',
+            width: '100%',
+            maxWidth: '300px',
         },
     };
 }

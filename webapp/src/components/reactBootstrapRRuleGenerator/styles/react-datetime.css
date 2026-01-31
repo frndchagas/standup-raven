@@ -1,225 +1,233 @@
-.rdt {
+/* ==========================================================================
+   react-datetime overrides - scoped under .standup-raven
+   Replaces hardcoded colors with Mattermost CSS tokens.
+   ========================================================================== */
+
+.standup-raven .rdt {
   position: relative;
 }
 
-.rdtPicker {
+.standup-raven .rdtPicker {
   display: none;
   position: absolute;
-  width: 250px;
+  width: 100%;
+  max-width: 300px;
+  min-width: 250px;
   padding: 4px;
   margin-top: 1px;
   z-index: 99999 !important;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #f9f9f9;
+  background: var(--center-channel-bg);
+  box-shadow: var(--elevation-2);
+  border: var(--border-light);
+  border-radius: var(--radius-m, 8px);
 }
 
-.rdtOpen .rdtPicker {
+.standup-raven .rdtOpen .rdtPicker {
   display: block;
 }
 
-.rdtStatic .rdtPicker {
+.standup-raven .rdtStatic .rdtPicker {
   box-shadow: none;
   position: static;
 }
 
-.rdtPicker .rdtTimeToggle {
+.standup-raven .rdtPicker .rdtTimeToggle {
   text-align: center;
 }
 
-.rdtPicker table {
+.standup-raven .rdtPicker table {
   width: 100%;
   margin: 0;
 }
 
-.rdtPicker td,
-.rdtPicker th {
+.standup-raven .rdtPicker td,
+.standup-raven .rdtPicker th {
   text-align: center;
-  height: 28px;
+  height: 40px;
 }
 
-.rdtPicker td {
+.standup-raven .rdtPicker td {
   cursor: pointer;
 }
 
-.rdtPicker td.rdtDay:hover,
-.rdtPicker td.rdtHour:hover,
-.rdtPicker td.rdtMinute:hover,
-.rdtPicker td.rdtSecond:hover,
-.rdtPicker .rdtTimeToggle:hover {
-  background: #eee;
+.standup-raven .rdtPicker td.rdtDay:hover,
+.standup-raven .rdtPicker td.rdtHour:hover,
+.standup-raven .rdtPicker td.rdtMinute:hover,
+.standup-raven .rdtPicker td.rdtSecond:hover,
+.standup-raven .rdtPicker .rdtTimeToggle:hover {
+  background: rgba(var(--center-channel-color-rgb), 0.08);
   cursor: pointer;
 }
 
-.rdtPicker td.rdtOld,
-.rdtPicker td.rdtNew {
-  color: #999;
+.standup-raven .rdtPicker td.rdtOld,
+.standup-raven .rdtPicker td.rdtNew {
+  color: rgba(var(--center-channel-color-rgb), 0.48);
 }
 
-.rdtPicker td.rdtToday {
+.standup-raven .rdtPicker td.rdtToday {
   position: relative;
 }
 
-.rdtPicker td.rdtToday::before {
+.standup-raven .rdtPicker td.rdtToday::before {
   content: '';
   display: inline-block;
   border-left: 7px solid transparent;
-  border-bottom: 7px solid #428bca;
+  border-bottom: 7px solid var(--button-bg);
   border-top-color: rgba(0, 0, 0, 0.2);
   position: absolute;
   bottom: 4px;
   right: 4px;
 }
 
-.rdtPicker td.rdtActive,
-.rdtPicker td.rdtActive:hover {
-  background-color: #428bca;
-  color: #fff;
+.standup-raven .rdtPicker td.rdtActive,
+.standup-raven .rdtPicker td.rdtActive:hover {
+  background-color: var(--button-bg);
+  color: var(--button-color);
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
-.rdtPicker td.rdtActive.rdtToday::before {
-  border-bottom-color: #fff;
+.standup-raven .rdtPicker td.rdtActive.rdtToday::before {
+  border-bottom-color: var(--button-color);
 }
 
-.rdtPicker td.rdtDisabled,
-.rdtPicker td.rdtDisabled:hover {
+.standup-raven .rdtPicker td.rdtDisabled,
+.standup-raven .rdtPicker td.rdtDisabled:hover {
   background: none;
-  color: #999;
+  color: rgba(var(--center-channel-color-rgb), 0.48);
   cursor: not-allowed;
 }
 
-.rdtPicker td span.rdtOld {
-  color: #999;
+.standup-raven .rdtPicker td span.rdtOld {
+  color: rgba(var(--center-channel-color-rgb), 0.48);
 }
 
-.rdtPicker td span.rdtDisabled,
-.rdtPicker td span.rdtDisabled:hover {
+.standup-raven .rdtPicker td span.rdtDisabled,
+.standup-raven .rdtPicker td span.rdtDisabled:hover {
   background: none;
-  color: #999;
+  color: rgba(var(--center-channel-color-rgb), 0.48);
   cursor: not-allowed;
 }
 
-.rdtPicker th {
-  border-bottom: 1px solid #f9f9f9;
+.standup-raven .rdtPicker th {
+  border-bottom: 1px solid rgba(var(--center-channel-color-rgb), 0.04);
 }
 
-.rdtPicker .dow {
+.standup-raven .rdtPicker .dow {
   width: 14.2857%;
   border-bottom: none;
 }
 
-.rdtPicker th.rdtSwitch {
+.standup-raven .rdtPicker th.rdtSwitch {
   width: 100px;
 }
 
-.rdtPicker th.rdtNext,
-.rdtPicker th.rdtPrev {
+.standup-raven .rdtPicker th.rdtNext,
+.standup-raven .rdtPicker th.rdtPrev {
   font-size: 21px;
   vertical-align: top;
 }
 
-.rdtPrev span,
-.rdtNext span {
+.standup-raven .rdtPrev span,
+.standup-raven .rdtNext span {
   display: block;
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Chrome/Safari/Opera */
-  -moz-user-select: none;      /* Firefox */
-  -ms-user-select: none;       /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
-.rdtPicker th.rdtDisabled,
-.rdtPicker th.rdtDisabled:hover {
+.standup-raven .rdtPicker th.rdtDisabled,
+.standup-raven .rdtPicker th.rdtDisabled:hover {
   background: none;
-  color: #999;
+  color: rgba(var(--center-channel-color-rgb), 0.48);
   cursor: not-allowed;
 }
 
-.rdtPicker thead tr:first-child th {
+.standup-raven .rdtPicker thead tr:first-child th {
   cursor: pointer;
 }
 
-.rdtPicker thead tr:first-child th:hover {
-  background: #eee;
+.standup-raven .rdtPicker thead tr:first-child th:hover {
+  background: rgba(var(--center-channel-color-rgb), 0.08);
 }
 
-.rdtPicker tfoot {
-  border-top: 1px solid #f9f9f9;
+.standup-raven .rdtPicker tfoot {
+  border-top: 1px solid rgba(var(--center-channel-color-rgb), 0.04);
 }
 
-.rdtPicker button {
+.standup-raven .rdtPicker button {
   border: none;
   background: none;
   cursor: pointer;
 }
 
-.rdtPicker thead button {
+.standup-raven .rdtPicker thead button {
   width: 100%;
   height: 100%;
 }
 
-.rdtPicker button:hover {
-  background-color: #eee;
+.standup-raven .rdtPicker button:hover {
+  background-color: rgba(var(--center-channel-color-rgb), 0.08);
 }
 
-td.rdtMonth,
-td.rdtYear {
+.standup-raven td.rdtMonth,
+.standup-raven td.rdtYear {
   height: 50px;
   width: 25%;
   cursor: pointer;
 }
 
-td.rdtMonth:hover,
-td.rdtYear:hover {
-  background: #eee;
+.standup-raven td.rdtMonth:hover,
+.standup-raven td.rdtYear:hover {
+  background: rgba(var(--center-channel-color-rgb), 0.08);
 }
 
-.rdtCounters {
+.standup-raven .rdtCounters {
   display: inline-block;
 }
 
-.rdtCounters > div {
+.standup-raven .rdtCounters > div {
   float: left;
 }
 
-.rdtCounter {
+.standup-raven .rdtCounter {
   width: 40px;
   height: 100px;
 }
 
-.rdtCounterSeparator {
+.standup-raven .rdtCounterSeparator {
   line-height: 100px;
 }
 
-.rdtCounter .rdtBtn {
+.standup-raven .rdtCounter .rdtBtn {
   height: 40%;
   line-height: 40px;
   cursor: pointer;
   display: block;
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Chrome/Safari/Opera */
-  -moz-user-select: none;      /* Firefox */
-  -ms-user-select: none;       /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
-.rdtCounter .rdtBtn:hover {
-  background: #eee;
+.standup-raven .rdtCounter .rdtBtn:hover {
+  background: rgba(var(--center-channel-color-rgb), 0.08);
 }
 
-.rdtCounter .rdtCount {
+.standup-raven .rdtCounter .rdtCount {
   height: 20%;
   font-size: 1.2em;
 }
 
-.rdtMilli {
+.standup-raven .rdtMilli {
   vertical-align: middle;
   padding-left: 8px;
   width: 48px;
 }
 
-.rdtMilli input {
+.standup-raven .rdtMilli input {
   width: 100%;
   font-size: 1.2em;
   margin-top: 37px;
