@@ -16,7 +16,6 @@ const result = await Bun.build({
     entrypoints: ['./src/index.jsx'],
     outdir: './dist',
     naming: 'main.js',
-    sourcemap: 'external',
     target: 'browser',
     format: 'iife',
     plugins: [
