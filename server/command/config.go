@@ -4,6 +4,8 @@ import (
 	"github.com/mattermost/mattermost/server/public/model"
 
 	"github.com/standup-raven/standup-raven/server/config"
+	"github.com/standup-raven/standup-raven/server/dialog"
+	"github.com/standup-raven/standup-raven/server/util"
 )
 
 func commandConfig() *Config {
@@ -24,6 +26,14 @@ func validateCommandConfig(args []string, context Context) (*model.CommandRespon
 }
 
 func executeCommandConfig(args []string, context Context) (*model.CommandResponse, *model.AppError) {
+	if context.IsMobile {
+		err := dialog.BuildConfigDialog(context.TriggerId, context.CommandArgs.ChannelId, context.CommandArgs.UserId)
+		if err != nil {
+			return util.SendEphemeralText("Could not open config dialog: " + err.Error())
+		}
+		return &model.CommandResponse{}, nil
+	}
+
 	config.Mattermost.PublishWebSocketEvent(
 		"open_config_modal",
 		map[string]interface{}{
@@ -36,6 +46,6 @@ func executeCommandConfig(args []string, context Context) (*model.CommandRespons
 
 	return &model.CommandResponse{
 		ResponseType: model.CommandResponseTypeEphemeral,
-		Text:         "Configure your standup in the open modal!", // TODO: update this message to something more elegant
+		Text:         "Configure your standup in the open modal!",
 	}, nil
 }

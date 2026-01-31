@@ -1,9 +1,9 @@
-.app__body .modal .dropdown .btn {
-  border: 1px solid;
-}
-
 .time-picker .btn {
   min-height: 40px;
+}
+
+.app__body .modal .dropdown .btn {
+  border: 1px solid;
 }
 
 .time-picker .dropdown-menu {

@@ -27,6 +27,8 @@ var Endpoints = map[string]*Endpoint{
 	getEndpointKey(getDefaultTimezone):       getDefaultTimezone,
 	getEndpointKey(getActiveStandupChannels): getActiveStandupChannels,
 	getEndpointKey(getPluginConfig):          getPluginConfig,
+	getEndpointKey(submitStandupDialog):      submitStandupDialog,
+	getEndpointKey(submitConfigDialog):       submitConfigDialog,
 }
 
 func getEndpointKey(endpoint *Endpoint) string {

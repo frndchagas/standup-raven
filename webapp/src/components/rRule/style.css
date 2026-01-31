@@ -76,7 +76,7 @@
 }
 
 .standup-raven .individual-day-of-week-selector .btn.btn-primary:hover {
-  background: rgba(var(--button-bg-rgb), 0.08) !important;
+  background: rgb(var(--button-bg-rgb) / 8%) !important;
   color: var(--button-bg) !important;
 }
 
@@ -130,7 +130,7 @@
 
 /* --- Responsive: Tablet (<=767px) --- */
 
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .standup-raven .standup-recurrence .col-sm-2.text-sm-right,
   .standup-raven .standup-recurrence .col-sm-1.offset-sm-2 {
     width: 100%;

@@ -10,6 +10,8 @@ import (
 type Context struct {
 	CommandArgs *model.CommandArgs
 	Props       map[string]interface{}
+	IsMobile    bool
+	TriggerId   string
 }
 
 type Config struct {

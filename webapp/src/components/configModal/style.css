@@ -21,7 +21,7 @@
 
 /* --- Responsive: Tablet (<=767px) --- */
 
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .standup-raven .form-group {
     flex-direction: column;
     align-items: stretch;

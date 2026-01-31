@@ -154,7 +154,7 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 		return nil, &model.AppError{Message: "Unknown command: [" + function + "] encountered"}
 	}
 
-	context := p.prepareContext(args)
+	context := p.prepareContext(c, args)
 	if response, err := command.Master().Validate(params, context); response != nil {
 		return response, err
 	}
@@ -163,10 +163,19 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 	return command.Master().Execute(params, context)
 }
 
-func (p *Plugin) prepareContext(args *model.CommandArgs) command.Context {
+func (p *Plugin) prepareContext(c *plugin.Context, args *model.CommandArgs) command.Context {
+	isMobile := false
+	if c.SessionId != "" {
+		session, err := config.Mattermost.GetSession(c.SessionId)
+		if err == nil && session != nil {
+			isMobile = session.IsMobileApp()
+		}
+	}
 	return command.Context{
 		CommandArgs: args,
 		Props:       make(map[string]interface{}),
+		IsMobile:    isMobile,
+		TriggerId:   args.TriggerId,
 	}
 }
 
