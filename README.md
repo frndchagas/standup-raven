@@ -15,28 +15,28 @@ A Mattermost plugin for communicating daily standups across teams
     <img src="docs/assets/images/standup.gif?raw=true"></img>
 </div>
 
-## ✨ Features
+## Features
 
 * Configurable standup window per channel for standup reminders
 
 * Automatic window open reminders
 
     <img src="docs/assets/images/first-reminder.png?raw=true" width="380px"></img>
-    
+
 * Automatic window close reminders
 
     <img src="docs/assets/images/second-reminder.png?raw=true" width="600px"></img>
-    
-* Per-channel customizable
+
+* Per-channel customizable (sections, timezone, schedule, report format, posting mode)
 
     <img src="docs/assets/images/config-general.png?raw=true" width="650px"></img>
-    
+
     <img src="docs/assets/images/config-notifications.png?raw=true" width="650px"></img>
-    
+
     <img src="docs/assets/images/config-schedule.png?raw=true" width="650px"></img>
-    
+
 * Automatic standup reports
-    
+
     <img src="docs/assets/images/report-user-aggregated.png?raw=true" width="500px"></img>
 
 * Multiple standup report formats -
@@ -44,49 +44,61 @@ A Mattermost plugin for communicating daily standups across teams
   * User Aggregated - Tasks aggregated by individual users
 
     <img src="docs/assets/images/report-user-aggregated.png?raw=true" width="500px"></img>
-     
+
   * Type Aggregated - Tasks aggregated by type
 
     <img src="docs/assets/images/report-type-aggregated.png?raw=true" width="500px"></img>
 
+* Two posting modes: **scheduled** (batched at window close) or **immediate** (posted on submission)
+* Recurring schedule via RRULE (weekly/monthly) with optional channel header display
+* Mobile support via Mattermost Interactive Dialogs
 * Ability to preview a standup report without publishing it in the channel
 * Ability to manually generate standup reports for any arbitrary date
 
-## 🧰 Functionality
+## Slash Commands
 
-* Customize standup sections on per-channel basis, so team members can make it suite their style.
+| Command | Description |
+|---------|-------------|
+| `/standup` | Open standup form (modal on desktop, dialog on mobile) |
+| `/standup config` | Open channel standup configuration |
+| `/standup addmembers @user1 @user2` | Add members to the channel's standup |
+| `/standup removemembers @user1 @user2` | Remove members from the channel's standup |
+| `/standup viewconfig` | Display current channel configuration |
+| `/standup report <public\|private> DD-MM-YYYY [date2...]` | Generate standup reports for specific dates |
+| `/standup help` | Display help text |
+
+## Functionality
+
+* Customize standup sections on per-channel basis, so team members can make it suit their style.
 
 * Multiple report formats to choose from.
 
+* Two posting modes: **scheduled** generates a batched report at window close time; **immediate** posts each standup to the channel as soon as it is submitted.
+
 * Receive a window open notification at the configured window open time to remind you to fill your standup.
 
-* Receive a reminder at the completion of 80% of the configured window duration to remind you to fill your standup. 
+* Receive a reminder at the completion of 80% of the configured window duration to remind you to fill your standup.
 This message tags those members who haven't yet filled their standup.
 
-* Receive an auto-generated standup report at the end of the configured window close time. 
+* Receive an auto-generated standup report at the end of the configured window close time.
 The generated standup contains the names of members who have yet to fill their standup.
+
+* Recurring standup schedules via RRULE (weekly or monthly frequency with configurable intervals and days).
+
+* Optional channel header integration showing the standup schedule.
+
+* Mobile support: on mobile clients, the plugin uses Mattermost Interactive Dialogs instead of web modals.
 
 * Allow or restrict standup configuration modification to channel admins (Requires Mattermost EE).
 
 ## Guides
 
-### User Guide
-
-* 👩‍💼 [User Guide](docs/user_guide.md)
-
-### Developer Guide
-
-* 🚦 [Getting Started](docs/getting_started.md)
-
-### Ops Guide
-
-* ⬇ [Installing](docs/installation.md)
-
-* 🏌️‍♀️[️Deployment](docs/deployment.md)
-
-* ⚙ [Plugin Configurations](docs/configuration.md)
-
-* ⁉ [Troubleshooting](docs/troubleshooting.md)
+* [User Guide](docs/user_guide.md)
+* [Getting Started (Developer)](docs/getting_started.md)
+* [Installing](docs/installation.md)
+* [Deployment](docs/deployment.md)
+* [Plugin Configurations](docs/configuration.md)
+* [Troubleshooting](docs/troubleshooting.md)
 
 ### TODO
 
@@ -100,11 +112,11 @@ For issues specific to this fork, please open a [GitHub issue](https://github.co
 
 For vulnerabilities in the original project, report them to hello@standupraven.com.
 
-## 🌟 Attribution
+## Attribution
 
 <div>Project logo (the Raven) is made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 
-## Contributors ✨
+## Contributors
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 

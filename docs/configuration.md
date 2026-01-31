@@ -2,9 +2,14 @@
 
 #
 
-## ⚙ Plugin Configurations
+## Plugin Configurations
 
-* `Time Zone`: The time zone your team is working in. This is to make sure all date times you enter are interpreted in your timezone and not the servers. This can be overridden in channel standup configuration.
-* `Work Week Start`: Day on which your work week starts.
-* `Work Week End`: Day on which your work week ends.
-* `Enable Permission Schema` - Requires Mattermost Enterprise Edition. If enabled, only channel admins, team admins or system admins are allowed to configure standup for a channel or update it.
+These settings are configured in the Mattermost **System Console** under the Standup Raven plugin settings.
+
+* **Time Zone** - The default timezone for your Mattermost instance. All datetimes are interpreted in this timezone unless overridden in a channel's standup configuration. Uses IANA timezone format (e.g. `America/Sao_Paulo`).
+
+* **Enable Permission Schema** - Requires Mattermost Enterprise Edition. If enabled, only channel admins, team admins or system admins are allowed to configure standup for a channel or update it.
+
+### Channel-Level Configuration
+
+Each channel has its own standup configuration, managed via `/standup config`. See the [User Guide](user_guide.md) for details on all available channel settings including window times, sections, report format, posting mode, RRULE schedule, and reminders.

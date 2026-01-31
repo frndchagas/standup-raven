@@ -12,9 +12,9 @@ See [deployment notes](deployment.md) for deploying to production.
 
 #### Source
 
-    $ git clone git@github.com:standup-raven/standup-raven.git
+    $ git clone git@github.com:frndchagas/standup-raven.git
 
-#### Go 1.22+
+#### Go 1.25+
 
     https://golang.org/doc/install
 
@@ -40,7 +40,7 @@ Only needed for `make deploy`. Already included with the Mattermost server or ca
 
 ### Mattermost Server (dev)
 
-The plugin requires a running Mattermost instance. The server repository is at `../mattermost/server/`.
+The plugin requires a running Mattermost instance (v9.0.0+). The server repository is at `../mattermost/server/`.
 
 #### Start infrastructure + server
 
@@ -79,15 +79,15 @@ make test-data           # start with sample data (sysadmin / Sys@dmin-sample1)
 make dist
 ```
 
-Generates `.tar.gz` packages in `dist/` for 5 platforms:
+Generates a `.tar.gz` package in `dist/` containing binaries for all 5 platforms:
 
-| Platform      | File |
-|---------------|------|
-| Linux amd64   | `mattermost-plugin-standup-raven-vX.Y.Z-linux-amd64.tar.gz` |
-| Linux arm64   | `mattermost-plugin-standup-raven-vX.Y.Z-linux-arm64.tar.gz` |
-| macOS amd64   | `mattermost-plugin-standup-raven-vX.Y.Z-darwin-amd64.tar.gz` |
-| macOS arm64   | `mattermost-plugin-standup-raven-vX.Y.Z-darwin-arm64.tar.gz` |
-| Windows amd64 | `mattermost-plugin-standup-raven-vX.Y.Z-windows-amd64.tar.gz` |
+| Platform      | Binary |
+|---------------|--------|
+| Linux amd64   | `server/plugin-linux-amd64` |
+| Linux arm64   | `server/plugin-linux-arm64` |
+| macOS amd64   | `server/plugin-darwin-amd64` |
+| macOS arm64   | `server/plugin-darwin-arm64` |
+| Windows amd64 | `server/plugin-windows-amd64.exe` |
 
 ### Local Deploy
 
@@ -113,7 +113,7 @@ make check-style-webapp    # JS only (eslint + stylelint)
 
 | Component | Technology |
 |-----------|------------|
-| Server    | Go 1.22, Mattermost Plugin API v8+ |
-| Webapp    | React 17, Bun (bundler + package manager) |
+| Server    | Go 1.25, Mattermost Plugin API (server/public v0.1.22) |
+| Webapp    | React 18, Bun (bundler + package manager) |
 | CI/CD     | GitHub Actions |
 | Deploy    | mmctl |
