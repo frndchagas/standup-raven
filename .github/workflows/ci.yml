@@ -143,7 +143,7 @@ jobs:
           LDFLAGS="-s -w -X 'main.PluginVersion=${PLUGIN_VERSION}' -X 'main.EncodedPluginIcon=data:image/svg+xml;base64,${ICON_BASE64}'"
 
           mkdir -p dist
-          go build -ldflags "${LDFLAGS}" -o dist/plugin${{ matrix.ext }} ./server
+          go build -ldflags "${LDFLAGS}" -o dist/plugin-${{ matrix.platform }}${{ matrix.ext }} ./server
 
       - name: Package plugin
         run: |
@@ -154,8 +154,8 @@ jobs:
           mkdir -p package/${PLUGIN_ID}/server
           mkdir -p package/${PLUGIN_ID}/webapp
 
-          # Copy server binary
-          cp dist/plugin${{ matrix.ext }} package/${PLUGIN_ID}/server/plugin${{ matrix.ext }}
+          # Copy server binary (Mattermost expects plugin-{os}-{arch} naming)
+          cp dist/plugin-${{ matrix.platform }}${{ matrix.ext }} package/${PLUGIN_ID}/server/plugin-${{ matrix.platform }}${{ matrix.ext }}
 
           # Copy webapp
           cp -r webapp-dist/* package/${PLUGIN_ID}/webapp/
