@@ -51,10 +51,12 @@ PLUGINNAME=$(call GetPluginId)
 PLUGINVERSION=$(call GetPluginVersion)
 PACKAGENAME=mattermost-plugin-$(PLUGINNAME)-$(PLUGINVERSION)
 
-LDFLAGS=-ldflags "-X 'main.PluginVersion=$(PLUGINVERSION)' -X 'main.EncodedPluginIcon=data:image/svg+xml;base64,$(shell base64 < webapp/src/assets/images/logo.svg | tr -d '\n')'"
+# Build flags: CI builds are optimized (-s -w strips debug info), dev builds include debug info
 ifdef CI
+LDFLAGS=-ldflags "-s -w -X 'main.PluginVersion=$(PLUGINVERSION)' -X 'main.EncodedPluginIcon=data:image/svg+xml;base64,$(shell base64 < webapp/src/assets/images/logo.svg | tr -d '\n')'"
 GCFLAGS=
 else
+LDFLAGS=-ldflags "-X 'main.PluginVersion=$(PLUGINVERSION)' -X 'main.EncodedPluginIcon=data:image/svg+xml;base64,$(shell base64 < webapp/src/assets/images/logo.svg | tr -d '\n')'"
 GCFLAGS=-gcflags 'all=-N -l'
 endif
 
@@ -102,7 +104,7 @@ fix-style-webapp:
 
 test-server: vendor
 	echo Running server tests
-	GOTOOLCHAIN=go1.24.11 go test -gcflags='all=-l' -v -coverprofile=coverage.txt ./...
+	go test -gcflags='all=-l' -v -coverprofile=coverage.txt ./...
 
 test: test-server
 
